@@ -2,9 +2,7 @@ package me.gravityio.goodlib.items;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
