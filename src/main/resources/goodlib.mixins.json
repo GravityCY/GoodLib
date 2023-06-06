@@ -5,15 +5,21 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "MissingTranslationImplMixin",
-    "RecipeManagerMixin",
+    "RecipeManagerImplMixin",
+    "better_compass.client.ItemStackAngleInterpolatorMixin",
     "better_loot.BlockEntityMixin",
     "better_loot.LootableContainerBlockEntityMixin",
-    "better_loot.StructureStartMixin"
+    "better_loot.StructureStartMixin",
+    "events.ForgingScreenHandlerMixins$ForgingScreenHandlerMixin",
+    "events.ForgingScreenHandlerMixins$LegacySmithingScreenHandlerMixin"
   ],
   "client": [
+    "ArmRenderableImplMixin",
     "CustomHotbarTooltipMixin",
     "KeyboardMixin",
-    "MouseMixin"
+    "MouseMixin",
+    "better_compass.client.CustomCompassAngleMixin",
+    "better_compass.client.CustomCompassDirectionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

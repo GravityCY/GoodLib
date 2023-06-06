@@ -2,6 +2,9 @@ package me.gravityio.goodlib.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.util.ActionResult;
 
 public class GoodEvents {
@@ -77,6 +80,15 @@ public class GoodEvents {
         listener.pressed(window, button, action, mods);
   });
 
+  /**
+   * Whenever a player crafts currently only works for the smithing table
+   */
+  public static Event<OnCraft> ON_CRAFT = EventFactory.createArrayBacked(OnCraft.class,
+    listeners -> (recipe, stack, player) -> {
+      for (OnCraft listener : listeners)
+        listener.craft(recipe, stack, player);
+  });
+
 
   public interface MissingTranslation {
     String onMissingTranslation(String key);
@@ -97,4 +109,9 @@ public class GoodEvents {
   public interface OnKeyPressed {
       ActionResult pressed(long window, int key, int scancode, int action, int mods);
   }
+
+  public interface OnCraft {
+    void craft(Recipe<?> recipe, ItemStack item, PlayerEntity player);
+  }
+
 }

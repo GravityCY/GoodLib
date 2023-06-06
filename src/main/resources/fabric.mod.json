@@ -14,11 +14,15 @@
   "entrypoints": {
     "main": [
       "me.gravityio.goodlib.GoodLib"
+    ],
+    "client": [
+      "me.gravityio.goodlib.client.GoodClientLib"
     ]
   },
   "mixins": [
     "GoodLib.mixins.json"
   ],
+  "accessWidener": "goodlib.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
