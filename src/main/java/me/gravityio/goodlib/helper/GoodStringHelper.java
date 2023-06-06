@@ -1,6 +1,6 @@
 package me.gravityio.goodlib.helper;
 
-public class StringHelper {
+public class GoodStringHelper {
 
     public static String capitalize(String str) {
         StringBuilder sb = new StringBuilder();

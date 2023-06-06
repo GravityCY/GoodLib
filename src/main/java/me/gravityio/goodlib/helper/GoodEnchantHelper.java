@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 
-public class GoodEnchantmentHelper extends net.minecraft.enchantment.EnchantmentHelper {
+public class GoodEnchantHelper extends net.minecraft.enchantment.EnchantmentHelper {
 
     public static final String ID_KEY = "id";
     public static final String LEVEL_KEY = "lvl";

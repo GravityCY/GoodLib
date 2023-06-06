@@ -1,6 +1,6 @@
 package me.gravityio.goodlib.items;
 
-import me.gravityio.goodlib.helper.ItemHelper;
+import me.gravityio.goodlib.helper.GoodItemHelper;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 
@@ -31,8 +31,8 @@ public class ItemInventory extends SimpleInventory {
     public ItemInventory(ItemStack inventoryStack, int size) {
         super(size);
         this.inventoryStack = inventoryStack;
-        this.nbtInventory = new NbtInventory(ItemHelper.NbtInventory.getNbtInventory(inventoryStack));
-        ItemHelper.NbtInventory.getOrderedInventory(inventoryStack).forEach(super.stacks::set);
+        this.nbtInventory = new NbtInventory(GoodItemHelper.NbtInventory.getNbtInventory(inventoryStack));
+        GoodItemHelper.NbtInventory.getOrderedInventory(inventoryStack).forEach(super.stacks::set);
     }
 
     @Override

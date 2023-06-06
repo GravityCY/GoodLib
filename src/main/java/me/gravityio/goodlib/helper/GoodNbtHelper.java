@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 /**
  * Some utilities regarding NBT that {@link net.minecraft.nbt.NbtHelper NbtHelper} doesn't have
  */
-public class NbtHelper {
+public class GoodNbtHelper {
 
     /**
      * Copies from a -> b.
@@ -32,7 +32,7 @@ public class NbtHelper {
 
     /**
      * Experimental method. <br>
-     * Essentially the same as {@link NbtHelper#getDeep NbtUtils#getDeep} but it tries to create the NbtCompounds along the way.
+     * Essentially the same as {@link GoodNbtHelper#getDeep NbtUtils#getDeep} but it tries to create the NbtCompounds along the way.
      *
      * @param comp {@link NbtCompound}.
      * @param typeSupplier A {@link Supplier} to supply a .
@@ -45,8 +45,8 @@ public class NbtHelper {
         if (comp == null) return null;
 
         if (orderedPaths.length != 1)
-            return getOrCreateDeep(NbtHelper.getOrCreate(comp, orderedPaths[0]), typeSupplier, clazz, Arrays.stream(orderedPaths).skip(1).toArray(String[]::new));
-        return NbtHelper.getOrCreate(comp, orderedPaths[0], typeSupplier, clazz);
+            return getOrCreateDeep(GoodNbtHelper.getOrCreate(comp, orderedPaths[0]), typeSupplier, clazz, Arrays.stream(orderedPaths).skip(1).toArray(String[]::new));
+        return GoodNbtHelper.getOrCreate(comp, orderedPaths[0], typeSupplier, clazz);
     }
 
     /**
@@ -78,7 +78,7 @@ public class NbtHelper {
         if (comp == null) return null;
 
         if (orderedKeys.length != 1)
-            return getDeep(NbtHelper.get(comp, orderedKeys[0]), clazz, Arrays.stream(orderedKeys).skip(1).toArray(String[]::new));
+            return getDeep(GoodNbtHelper.get(comp, orderedKeys[0]), clazz, Arrays.stream(orderedKeys).skip(1).toArray(String[]::new));
         return clazz.cast(comp.get(orderedKeys[0]));
     }
 
@@ -182,7 +182,7 @@ public class NbtHelper {
      */
     public static NbtCompound getOrCreate(NbtCompound nbt, String key) {
         if (nbt == null) return null;
-        NbtCompound ret = NbtHelper.get(nbt, key);
+        NbtCompound ret = GoodNbtHelper.get(nbt, key);
         if (ret == null)
             nbt.put(key, ret = new NbtCompound());
         return ret;

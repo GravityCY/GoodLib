@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * A class with some static methods that should have been in the {@link ItemStack} class
  */
-public class ItemHelper {
+public class GoodItemHelper {
 
     /**
      * Set the Lore of an {@link ItemStack}.
@@ -25,8 +25,8 @@ public class ItemHelper {
      */
     public static void setLore(ItemStack stack, Text... loreInput) {
         NbtCompound nbt = stack.getOrCreateNbt();
-        NbtCompound display = NbtHelper.getOrCreate(nbt, ItemStack.DISPLAY_KEY);
-        NbtList loreList = NbtHelper.getOrCreate(display, ItemStack.LORE_KEY, NbtList::new, NbtList.class);
+        NbtCompound display = GoodNbtHelper.getOrCreate(nbt, ItemStack.DISPLAY_KEY);
+        NbtList loreList = GoodNbtHelper.getOrCreate(display, ItemStack.LORE_KEY, NbtList::new, NbtList.class);
         loreList.clear();
         for (Text loreLine : loreInput)
             loreList.add(NbtString.of(Text.Serializer.toJson(loreLine)));
@@ -40,9 +40,9 @@ public class ItemHelper {
     public static List<String> getLore(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
         if (nbt == null) return null;
-        NbtCompound display = NbtHelper.get(nbt, ItemStack.DISPLAY_KEY, NbtCompound.class);
+        NbtCompound display = GoodNbtHelper.get(nbt, ItemStack.DISPLAY_KEY, NbtCompound.class);
         if (display == null) return null;
-        NbtList loreList = NbtHelper.get(display, ItemStack.LORE_KEY, NbtList.class);
+        NbtList loreList = GoodNbtHelper.get(display, ItemStack.LORE_KEY, NbtList.class);
         if (loreList == null) return null;
         List<String> loreArray = new ArrayList<>();
         for (NbtElement element : loreList)
@@ -74,7 +74,7 @@ public class ItemHelper {
      */
     public static void setHotbarTooltip(ItemStack stack, Text text) {
         NbtCompound nbt = stack.getOrCreateNbt();
-        NbtCompound display = NbtHelper.getOrCreate(nbt, ItemStack.DISPLAY_KEY);
+        NbtCompound display = GoodNbtHelper.getOrCreate(nbt, ItemStack.DISPLAY_KEY);
         display.putString("hotbar", Text.Serializer.toJson(text));
     }
 
@@ -86,9 +86,9 @@ public class ItemHelper {
     public static Text getHotbarTooltip(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
         if (nbt == null) return null;
-        NbtCompound display = NbtHelper.get(nbt, ItemStack.DISPLAY_KEY);
+        NbtCompound display = GoodNbtHelper.get(nbt, ItemStack.DISPLAY_KEY);
         if (display == null) return null;
-        NbtString hotbarTooltip = NbtHelper.get(display, "hotbar", NbtString.class);
+        NbtString hotbarTooltip = GoodNbtHelper.get(display, "hotbar", NbtString.class);
         if (hotbarTooltip == null) return null;
         return Text.Serializer.fromLenientJson(hotbarTooltip.asString());
     }

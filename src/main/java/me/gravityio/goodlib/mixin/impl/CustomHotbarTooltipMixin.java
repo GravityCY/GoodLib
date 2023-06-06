@@ -1,6 +1,6 @@
 package me.gravityio.goodlib.mixin.impl;
 
-import me.gravityio.goodlib.helper.ItemHelper;
+import me.gravityio.goodlib.helper.GoodItemHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
@@ -25,7 +25,7 @@ public class CustomHotbarTooltipMixin {
             ordinal = 0
     )
     private MutableText onRenderCustomTooltip(MutableText original) {
-        MutableText tooltip = (MutableText) ItemHelper.getHotbarTooltip(this.currentStack);
+        MutableText tooltip = (MutableText) GoodItemHelper.getHotbarTooltip(this.currentStack);
         return tooltip == null ? original : tooltip;
     }
 }

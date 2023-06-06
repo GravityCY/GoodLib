@@ -1,4 +1,4 @@
-package me.gravityio.goodlib.lib.util;
+package me.gravityio.goodlib.util;
 
 import java.util.HashMap;
 import java.util.List;

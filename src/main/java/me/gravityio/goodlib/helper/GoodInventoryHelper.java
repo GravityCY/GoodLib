@@ -7,7 +7,7 @@ import net.minecraft.util.collection.DefaultedList;
 /**
  * Utility functions for Inventory Related Stuff
  */
-public class InventoryHelper {
+public class GoodInventoryHelper {
 
     /**
      * Returns whether you can insert an {@link ItemStack} into a list of {@link DefaultedList slots}.

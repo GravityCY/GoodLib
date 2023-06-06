@@ -4,7 +4,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
-public class VecHelper {
+public class GoodVecHelper {
 
     /**
      * Gets a global position relative to a global position based off its rotation and a local offset <br>
