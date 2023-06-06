@@ -25,6 +25,7 @@ public class NbtInventory {
         if (listSlot == -1) this.inventory.add(stackCompound);
         else this.inventory.set(listSlot, stackCompound);
     }
+
     public void removeStack(int slot, int amount) {
         int listSlot = getListSlot(slot);
         if (listSlot != -1) {
