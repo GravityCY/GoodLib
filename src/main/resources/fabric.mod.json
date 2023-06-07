@@ -6,7 +6,8 @@
   "description": "A Good Library (trust me)",
   "authors": ["A Good Author"],
   "contact": {
-    "repo": "https://github.com/gravityio/GoodLib"
+    "sources": "https://github.com/GravityCY/GoodLib",
+    "issues": "https://github.com/GravityCY/GoodLib/issues"
   },
   "license": "MIT",
   "icon": "assets/goodlib/icon.png",
