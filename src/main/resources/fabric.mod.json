@@ -13,8 +13,7 @@
   "icon": "assets/goodlib/icon.png",
   "custom": {
     "modmenu": {
-      "badges": [ "library" ],
-      "parent": "goodmc"
+      "badges": [ "library" ]
     }
   },
   "environment": "*",
