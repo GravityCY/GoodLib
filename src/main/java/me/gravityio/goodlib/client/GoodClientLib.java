@@ -8,13 +8,11 @@ import net.minecraft.client.MinecraftClient;
 public class GoodClientLib implements ClientModInitializer, ClientTickEvents.StartTick {
   @Override
   public void onInitializeClient() {
-    KeybindManager.init();
     ClientTickEvents.START_CLIENT_TICK.register(this);
   }
 
   @Override
   public void onStartTick(MinecraftClient client) {
     KeybindManager.tick();
-
   }
 }
