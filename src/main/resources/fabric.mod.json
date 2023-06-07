@@ -11,6 +11,12 @@
   },
   "license": "MIT",
   "icon": "assets/goodlib/icon.png",
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": "goodmc"
+    }
+  },
   "environment": "*",
   "entrypoints": {
     "main": [
