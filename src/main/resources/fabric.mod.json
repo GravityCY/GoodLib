@@ -20,7 +20,7 @@
     ]
   },
   "mixins": [
-    "GoodLib.mixins.json"
+    "goodlib.mixins.json"
   ],
   "accessWidener": "goodlib.accesswidener",
   "depends": {

@@ -3,8 +3,10 @@ package me.gravityio.goodlib.helper;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,25 +25,27 @@ public class GoodNbtHelper {
      * @param to To Key.
      * @return Whether it succeeded
      */
-    public static boolean internalCopy(NbtCompound comp, String from, String to) {
-        if (comp.get(from) == null) return false;
+    public static boolean internalCopy(@Nullable NbtCompound comp, @NotNull String from,
+                                       @NotNull String to) {
+        NbtElement elem;
+        if (comp == null || (elem = comp.get(from)) == null) return false;
 
-        comp.put(to, comp.get(from).copy());
+        comp.put(to, elem.copy());
         return true;
     }
 
     /**
-     * Experimental method. <br>
+     * Experimental method haven't tried it yet. <br>
      * Essentially the same as {@link GoodNbtHelper#getDeep NbtUtils#getDeep} but it tries to create the NbtCompounds along the way.
      *
      * @param comp {@link NbtCompound}.
      * @param typeSupplier A {@link Supplier} to supply a .
      * @param clazz A {@link Class} to cast the resulting {@link NbtElement} to.
-     * @param orderedPaths
-     * @return
-     * @param <T>
+     * @param orderedPaths VarArgs of Strings
+     * @return The cast element of the class variable
      */
-    public static <T extends NbtElement> T getOrCreateDeep(NbtCompound comp, Supplier<T> typeSupplier, Class<T> clazz, String... orderedPaths) {
+    public static <T extends NbtElement> @Nullable T getOrCreateDeep(@Nullable NbtCompound comp, @NotNull Supplier<T> typeSupplier,
+                                                                     @NotNull Class<T> clazz, @NotNull String... orderedPaths) {
         if (comp == null) return null;
 
         if (orderedPaths.length != 1)
@@ -50,7 +54,7 @@ public class GoodNbtHelper {
     }
 
     /**
-     * Experimental Method. <br>
+     * Experimental Method haven't tried it yet.<br>
      * Essentially gets an {@link NbtElement} that is nested under multiple {@link NbtCompound NbtCompounds} <br><br>
      * Here we have an example of an {@link NbtCompound}
      * <pre>
@@ -74,12 +78,30 @@ public class GoodNbtHelper {
      * @return The resulting {@link NbtElement}. (hopefully)
      * @param <T> Class argument, should a class extending {@link NbtElement}
      */
-    public static <T extends NbtElement> T getDeep(NbtCompound comp, Class<T> clazz, String... orderedKeys) {
+    public static <T extends NbtElement> @Nullable T getDeep(@Nullable NbtCompound comp, @NotNull Class<T> clazz,
+                                                             @NotNull String... orderedKeys) {
         if (comp == null) return null;
 
         if (orderedKeys.length != 1)
             return getDeep(GoodNbtHelper.get(comp, orderedKeys[0]), clazz, Arrays.stream(orderedKeys).skip(1).toArray(String[]::new));
-        return clazz.cast(comp.get(orderedKeys[0]));
+
+        NbtElement elem = comp.get(orderedKeys[0]);
+        return clazz.isInstance(elem) ? clazz.cast(elem) : null;
+    }
+
+    /**
+     * Experimental Method haven't tried it yet.<br>
+     * Same as getDeep etc. but just does checks whether things exist.
+     * @param comp NbtCompound
+     * @param orderedKeys VarArgs of Strings
+     * @return Whether something exists or not
+     */
+    public static <T extends NbtElement> boolean containsDeep(@Nullable NbtCompound comp, @NotNull String... orderedKeys) {
+        if (comp == null) return false;
+
+        if (orderedKeys.length != 1)
+            return containsDeep(GoodNbtHelper.get(comp, orderedKeys[0]), Arrays.stream(orderedKeys).skip(1).toArray(String[]::new));
+        return comp.contains(orderedKeys[0]);
     }
 
     /**
@@ -88,8 +110,8 @@ public class GoodNbtHelper {
      * @param elementConverter a Function that receives your list elements and should return something that extends or is an NbtElement
      * @return {@link NbtList} from the {@link List}
      */
-    public static <T> NbtList fromList(List<T> list, Function<T, NbtElement> elementConverter) {
-        if (list == null || elementConverter == null) return null;
+    public static <T> @Nullable NbtList fromList(@Nullable List<T> list, @NotNull Function<T, NbtElement> elementConverter) {
+        if (list == null) return null;
 
         NbtList nbtList = new NbtList();
         list.forEach(o -> {
@@ -107,8 +129,9 @@ public class GoodNbtHelper {
      * @param elementConverter a Function that receives the NbtLists' NbtElements and converts them to your List Type
      * @return Converted {@link List}
      */
-    public static <T> List<T> toList(NbtList nbtList, List<T> list, Function<NbtElement, T> elementConverter) {
-        if (nbtList == null || list == null || elementConverter == null) return null;
+    public static <T> @Nullable List<T> toList(@Nullable NbtList nbtList, @NotNull List<T> list,
+                                               @NotNull Function<NbtElement, T> elementConverter) {
+        if (nbtList == null) return null;
 
         nbtList.forEach(t -> {
             T converted = elementConverter.apply(t);
@@ -125,8 +148,9 @@ public class GoodNbtHelper {
      * @param valueConverter a {@link Function} that receives your maps' value and converts it into an {@link NbtElement}
      * @return The converted {@link NbtCompound}
      */
-    public static <T, F> NbtCompound fromMap(Map<T, F> map, Function<T, String> keyConverter, Function<F, NbtElement> valueConverter) {
-        if (map == null || keyConverter == null || valueConverter == null) return null;
+    public static <T, F> @Nullable NbtCompound fromMap(@Nullable Map<T, F> map, @NotNull Function<T, String> keyConverter,
+                                                       @NotNull Function<F, NbtElement> valueConverter) {
+        if (map == null) return null;
 
         NbtCompound nbtCompound = new NbtCompound();
         map.forEach((o1, o2) -> {
@@ -146,8 +170,9 @@ public class GoodNbtHelper {
      * @param valueConverter a {@link Function} that receives the {@link NbtCompound NbtCompounds'} value ({@link NbtElement}) and converts it into your {@link Map Maps'} Key Type
      * @return The converted {@link Map}
      */
-    public static <T, F> Map<T, F> toMap(NbtCompound nbtCompound, Map<T, F> map, Function<String, T> keyConverter, Function<NbtElement, F> valueConverter) {
-        if (nbtCompound == null || map == null || keyConverter == null || valueConverter == null) return null;
+    public static <T, F> @Nullable Map<T, F> toMap(@Nullable NbtCompound nbtCompound, @NotNull Map<T, F> map,
+                                                   @NotNull Function<String, T> keyConverter, @NotNull Function<NbtElement, F> valueConverter) {
+        if (nbtCompound == null) return null;
 
         nbtCompound.getKeys().forEach(key -> {
             T convertedKey = keyConverter.apply(key);
@@ -165,7 +190,8 @@ public class GoodNbtHelper {
      * @param typeSupplier A {@link Supplier} to provide the element you want to be created if it doesn't exist.
      * @return The element that has been either gotten or created.
      */
-    public static <T extends NbtElement> T getOrCreate(NbtCompound nbt, String key, Supplier<T> typeSupplier, Class<T> clazz) {
+    public static <T extends NbtElement> @Nullable T getOrCreate(@Nullable NbtCompound nbt, @NotNull String key,
+                                                                 @NotNull Supplier<T> typeSupplier, @NotNull Class<T> clazz) {
         if (nbt == null) return null;
         NbtElement elem = nbt.get(key);
         if (!clazz.isInstance(elem))
@@ -180,7 +206,7 @@ public class GoodNbtHelper {
      * @param key The key of the element to get or create.
      * @return The element that has been either gotten or created
      */
-    public static NbtCompound getOrCreate(NbtCompound nbt, String key) {
+    public static @Nullable NbtCompound getOrCreate(@Nullable NbtCompound nbt, @NotNull String key) {
         if (nbt == null) return null;
         NbtCompound ret = GoodNbtHelper.get(nbt, key);
         if (ret == null)
@@ -197,9 +223,11 @@ public class GoodNbtHelper {
      * @return Returns the type of the class parameter
      * @param <T> The class of what to return
      */
-    public static <T extends NbtElement> @Nullable T get(NbtCompound nbt, String key, Class<T> clazz) {
+    public static <T extends NbtElement> @Nullable T get(@Nullable NbtCompound nbt, @NotNull String key,
+                                                         @NotNull Class<T> clazz) {
         if (nbt == null) return null;
-        return clazz.cast(nbt.get(key));
+        NbtElement elem = nbt.get(key);
+        return clazz.isInstance(elem) ? clazz.cast(elem) : null;
     }
 
     /**
@@ -208,8 +236,7 @@ public class GoodNbtHelper {
      * @param key The key inside the NBT
      * @return Returns an
      */
-    public static @Nullable NbtCompound get(NbtCompound nbt, String key) {
-        if (nbt == null) return null;
-        return (NbtCompound) nbt.get(key);
+    public static @Nullable NbtCompound get(@Nullable NbtCompound nbt, @NotNull String key) {
+        return get(nbt, key, NbtCompound.class);
     }
 }

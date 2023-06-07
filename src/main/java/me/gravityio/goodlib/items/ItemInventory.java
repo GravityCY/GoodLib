@@ -6,10 +6,11 @@ import net.minecraft.item.ItemStack;
 
 
 /**
+ *      <b>Expects the item to have an NbtList at BlockEntityTag.Items</b><br<br>
  *      An Inventory based off of an ItemStack, for example Shulker Boxes <br>
  *      Gives the ability to proxy all Inventory functions to the NBT data of the ItemStack <br>
  *      This is kind of a raw class because it does not do any checks for if the inventory that the ItemStack is in is still there, meaning if you had an ItemStack in an inventory and that inventory's block get's destroyed this inventory would still be open <br><br>
- *      If you want to use a class that will do checks for whether the invnetory I recommend you extend this class and just
+ *      If you want to use a class that will do checks for whether the inventory can be accesed I recommend you extend this class and just
  *      <pre>{@code
  *      @override
  *      private boolean canPlayerUse(PlayerEntity entity) {
@@ -21,7 +22,7 @@ import net.minecraft.item.ItemStack;
 public class ItemInventory extends SimpleInventory {
 
     protected final ItemStack inventoryStack;
-    protected final NbtInventory nbtInventory;
+    protected NbtInventory nbtInventory;
 
     /**
      * @param inventoryStack The Stack the inventory is going to based off
@@ -31,8 +32,7 @@ public class ItemInventory extends SimpleInventory {
     public ItemInventory(ItemStack inventoryStack, int size) {
         super(size);
         this.inventoryStack = inventoryStack;
-        this.nbtInventory = new NbtInventory(GoodItemHelper.NbtInventory.getNbtInventory(inventoryStack));
-        GoodItemHelper.NbtInventory.getOrderedInventory(inventoryStack).forEach(super.stacks::set);
+        setupInventory();
     }
 
     @Override
@@ -58,5 +58,10 @@ public class ItemInventory extends SimpleInventory {
     public void clear() {
         nbtInventory.clear();
         super.clear();
+    }
+
+    protected void setupInventory() {
+        this.nbtInventory = new NbtInventory(GoodItemHelper.NbtInventory.getNbtInventory(inventoryStack));
+        GoodItemHelper.NbtInventory.getOrderedInventory(inventoryStack).forEach(super.stacks::set);
     }
 }
