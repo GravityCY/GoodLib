@@ -99,7 +99,7 @@ public class GoodEvents {
     listeners -> (world, player, hand) -> {
       for (OnItemUse listener : listeners) {
         TypedActionResult<ItemStack> result = listener.onUse(world, player, hand);
-        if (result.getResult() != ActionResult.PASS)
+        if (result != null && result.getResult() != ActionResult.PASS)
           return result;
       }
       return null;
