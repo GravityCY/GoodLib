@@ -1,4 +1,4 @@
-package me.gravityio.goodlib.mixin.impl;
+package me.gravityio.goodlib.mixin.impl.events;
 
 import me.gravityio.goodlib.events.GoodEvents;
 import net.minecraft.client.Mouse;

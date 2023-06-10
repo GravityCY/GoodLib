@@ -6,6 +6,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
 
 public class GoodEvents {
 
@@ -89,29 +92,46 @@ public class GoodEvents {
         listener.craft(recipe, stack, player);
   });
 
+  /**
+   * Whenever a player uses an item
+   */
+  public static Event<OnItemUse> ON_ITEM_USE = EventFactory.createArrayBacked(OnItemUse.class,
+    listeners -> (world, player, hand) -> {
+      for (OnItemUse listener : listeners) {
+        TypedActionResult<ItemStack> result = listener.onUse(world, player, hand);
+        if (result.getResult() != ActionResult.PASS)
+          return result;
+      }
+      return null;
+  });
+
 
   public interface MissingTranslation {
     String onMissingTranslation(String key);
   }
 
   public interface OnMouseScrolled {
-      ActionResult scroll(long window, double horizontal, double vertical);
+    ActionResult scroll(long window, double horizontal, double vertical);
   }
 
   public interface OnMousePressed {
-      ActionResult pressed(long window, int button, int action, int mods);
+    ActionResult pressed(long window, int button, int action, int mods);
   }
 
   public interface OnMousePressedAfter {
-      void pressed(long window, int button, int action, int mods);
+    void pressed(long window, int button, int action, int mods);
   }
 
   public interface OnKeyPressed {
-      ActionResult pressed(long window, int key, int scancode, int action, int mods);
+    ActionResult pressed(long window, int key, int scancode, int action, int mods);
   }
 
   public interface OnCraft {
     void craft(Recipe<?> recipe, ItemStack item, PlayerEntity player);
+  }
+
+  public interface OnItemUse {
+    TypedActionResult<ItemStack> onUse(World world, PlayerEntity player, Hand hand);
   }
 
 }

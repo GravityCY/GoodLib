@@ -1,4 +1,4 @@
-package me.gravityio.goodlib.mixin.impl;
+package me.gravityio.goodlib.mixin.impl.events;
 
 import com.google.common.collect.ImmutableList;
 import me.gravityio.goodlib.events.GoodEvents;

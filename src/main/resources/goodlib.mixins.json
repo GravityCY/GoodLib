@@ -4,22 +4,23 @@
   "package": "me.gravityio.goodlib.mixin.impl",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MissingTranslationImplMixin",
     "RecipeManagerImplMixin",
     "better_compass.client.ItemStackAngleInterpolatorMixin",
     "better_loot.BlockEntityMixin",
     "better_loot.LootableContainerBlockEntityMixin",
     "better_loot.StructureStartMixin",
     "events.ForgingScreenHandlerMixins$ForgingScreenHandlerMixin",
-    "events.ForgingScreenHandlerMixins$LegacySmithingScreenHandlerMixin"
+    "events.ForgingScreenHandlerMixins$LegacySmithingScreenHandlerMixin",
+    "events.ItemMixin",
+    "events.MissingTranslationImplMixin"
   ],
   "client": [
     "ArmRenderableImplMixin",
     "CustomHotbarTooltipMixin",
-    "KeyboardMixin",
-    "MouseMixin",
     "better_compass.client.CustomCompassAngleMixin",
-    "better_compass.client.CustomCompassDirectionMixin"
+    "better_compass.client.CustomCompassDirectionMixin",
+    "events.KeyboardMixin",
+    "events.MouseMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -5,12 +5,15 @@ import me.gravityio.goodlib.helper.GoodNbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -33,7 +36,7 @@ public class BetterCompass {
     public static GlobalPos getGlobalPosPoint(ItemStack compass) {
         if (!BetterCompass.isPointingAtPosition(compass)) return null;
         NbtCompound pointsToComp = compass.getNbt().getCompound(POINTS_TO);
-        BlockPos blockPos = net.minecraft.nbt.NbtHelper.toBlockPos(pointsToComp.getCompound(BLOCK_POS));
+        BlockPos blockPos = NbtHelper.toBlockPos(pointsToComp.getCompound(BLOCK_POS));
         NbtElement dimensionElem = pointsToComp.get(DIMENSION);
 
         Optional<RegistryKey<World>> world = World.CODEC.parse(NbtOps.INSTANCE, dimensionElem).result();
@@ -116,7 +119,7 @@ public class BetterCompass {
      */
     public static void setPointPosition(ItemStack compass, BlockPos pos) {
         GoodLib.LOGGER.debug("[CompassUtils] Setting compass point position to: {}", pos);
-        BetterCompass.getOrCreatePointsTo(compass).put(BLOCK_POS, net.minecraft.nbt.NbtHelper.fromBlockPos(pos));
+        BetterCompass.getOrCreatePointsTo(compass).put(BLOCK_POS, NbtHelper.fromBlockPos(pos));
     }
 
     /**
@@ -126,7 +129,7 @@ public class BetterCompass {
      */
     public static BlockPos getPointPosition(ItemStack compass) {
         if (!BetterCompass.isPointingAtPosition(compass)) return null;
-        return net.minecraft.nbt.NbtHelper.toBlockPos(getPointsTo(compass).getCompound(BLOCK_POS));
+        return NbtHelper.toBlockPos(getPointsTo(compass).getCompound(BLOCK_POS));
     }
 
     /**
@@ -164,7 +167,7 @@ public class BetterCompass {
         return getPointsTo(compass).contains(RANDOM);
     }
 
-    public static Boolean getRandom(ItemStack compass) {
+    public static Boolean getRandom(@NotNull ItemStack compass) {
         if (!isPointingRandom(compass)) return null;
         return getPointsTo(compass).getBoolean(RANDOM);
     }
