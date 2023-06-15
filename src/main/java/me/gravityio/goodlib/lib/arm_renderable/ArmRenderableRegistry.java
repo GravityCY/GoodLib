@@ -27,7 +27,7 @@ public class ArmRenderableRegistry {
         Item item = itemStack.getItem();
         for (ArmRenderable armRenderable : armRenderableList) {
             for (Item armItem : armRenderable.getItems()) {
-                if (armItem.equals(item)) return armRenderable;
+                if (armItem == item) return armRenderable;
             }
         }
         return null;

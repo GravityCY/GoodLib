@@ -1,11 +1,14 @@
 package me.gravityio.goodlib.helper;
 
+import net.minecraft.client.render.entity.feature.StuckStingersFeatureRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemStackSet;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +26,17 @@ import static net.minecraft.item.ItemStack.LORE_KEY;
 public class GoodItemHelper {
 
     public static final String HOTBAR_KEY = "hotbar";
+    public static final String LORE_PATH = "%s.%s".formatted(DISPLAY_KEY, LORE_KEY);
+
+    /**
+     * Clears lore
+     * @param stack
+     */
+    public static void clearLore(ItemStack stack) {
+        NbtList loreList = getLoreNbt(stack);
+        if (loreList != null)
+            loreList.clear();
+    }
 
     /**
      * Set the Lore of an {@link ItemStack}.
@@ -30,12 +44,53 @@ public class GoodItemHelper {
      * @param loreInput The {@link Text} to set the Lore to.
      */
     public static void setLore(ItemStack stack, Text... loreInput) {
-        NbtCompound nbt = stack.getOrCreateNbt();
-        NbtCompound display = GoodNbtHelper.getOrCreate(nbt, DISPLAY_KEY);
-        NbtList loreList = GoodNbtHelper.getOrCreate(display, LORE_KEY, NbtList::new, NbtList.class);
-        loreList.clear();
-        for (Text loreLine : loreInput)
-            loreList.add(NbtString.of(Text.Serializer.toJson(loreLine)));
+        NbtList loreList = getOrCreateLoreNbt(stack);
+        for (int i = 0; i < loreInput.length; i++) {
+            Text input = loreInput[i];
+            if (input == null) continue;
+            NbtString nbtString = NbtString.of(Text.Serializer.toJson(input));
+            if (i < loreList.size())
+                loreList.set(i, nbtString);
+            else
+                loreList.add(nbtString);
+        }
+    }
+
+    /**
+     * Set the lore
+     * @param stack
+     * @param loreInput
+     * @param index
+     */
+    public static void setLore(ItemStack stack, Text loreInput, int index) {
+        Text[] texts = new Text[index + 1];
+        texts[index] = loreInput;
+        setLore(stack, texts);
+    }
+
+    /**
+     * Allows you to 1 Text Object that uses newlines to separate the Text into their own separate lore lines <br><br>
+     * Usage Example:
+     * <pre>{@code setLoreFromText(stack, Text.translatable("gui.modid.name\ngui.modid.description"))}</pre>
+     * Compared to
+     * <pre>{@code setLore(stack, Text.translatable("gui.modid.name"), Text.translatable("gui.modid.description")}</pre>
+     * @param stack
+     * @param loreInput
+     */
+    public static void setLoreFromText(ItemStack stack, Text loreInput) {
+        String input = loreInput.getString();
+        List<Text> loreList = new ArrayList<>();
+        boolean translatable = loreInput.getContent() instanceof TranslatableTextContent;
+        for (String split : input.split("\n")) {
+            Text temp;
+            if (translatable) {
+                temp = Text.translatable(split);
+            } else {
+                temp = Text.literal(split);
+            }
+            loreList.add(temp);
+        }
+        setLore(stack, loreList.toArray(new Text[0]));
     }
 
     /**
@@ -44,12 +99,9 @@ public class GoodItemHelper {
      * @return {@link List} of Strings.
      */
     public static List<String> getLore(ItemStack stack) {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt == null) return null;
-        NbtCompound display = GoodNbtHelper.get(nbt, DISPLAY_KEY, NbtCompound.class);
-        if (display == null) return null;
-        NbtList loreList = GoodNbtHelper.get(display, LORE_KEY, NbtList.class);
+        NbtList loreList = getLoreNbt(stack);
         if (loreList == null) return null;
+
         List<String> loreArray = new ArrayList<>();
         for (NbtElement element : loreList)
             loreArray.add(element.asString());
@@ -64,13 +116,34 @@ public class GoodItemHelper {
     public static String getLoreAsString(ItemStack stack) {
         List<String> lore = getLore(stack);
         if (lore == null) return null;
+
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < lore.size(); i++) {
             String line = lore.get(i);
-            stringBuilder.append(line);
+            Text text = Text.Serializer.fromJson(line);
+            stringBuilder.append(text.getString());
             if (i != lore.size() - 1) stringBuilder.append(" ");
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Gets the NbtList of the lore of an ItemStack
+     * @param stack
+     * @return
+     */
+    public static @Nullable NbtList getLoreNbt(@NotNull ItemStack stack) {
+        return GoodNbtHelper.getDeep(stack.getNbt(), NbtList.class, DISPLAY_KEY, LORE_KEY);
+    }
+
+    /**
+     * Gets or creates an NbtList for the lore of an ItemStack
+     * @param stack
+     * @return
+     */
+    public static @Nullable NbtList getOrCreateLoreNbt(@NotNull ItemStack stack) {
+        return GoodNbtHelper.getOrCreateDeep(stack.getOrCreateNbt(), NbtList::new, NbtList.class,
+                DISPLAY_KEY, LORE_KEY);
     }
 
     /**
@@ -78,6 +151,7 @@ public class GoodItemHelper {
      * @param stack
      * @param text
      */
+//    @Command
     public static void setHotbarTooltip(@NotNull final ItemStack stack, @NotNull final Text text) {
         NbtCompound display = GoodNbtHelper.getOrCreate(stack.getOrCreateNbt(), DISPLAY_KEY);
         display.putString(HOTBAR_KEY, Text.Serializer.toJson(text));
@@ -88,10 +162,21 @@ public class GoodItemHelper {
      * @param stack
      * @return
      */
+//    @Command
     public static Text getHotbarTooltip(@NotNull final ItemStack stack) {
         NbtString hotbarTooltip = GoodNbtHelper.getDeep(stack.getNbt(), NbtString.class, DISPLAY_KEY, HOTBAR_KEY);
         if (hotbarTooltip == null) return null;
         return Text.Serializer.fromLenientJson(hotbarTooltip.asString());
+    }
+
+    /**
+     * Clears the hotbar tooltip
+     * @param stack
+     */
+    public static void clearHotbarTooltip(@NotNull final ItemStack stack) {
+        NbtCompound displayKey = GoodNbtHelper.getDeep(stack.getNbt(), NbtCompound.class, DISPLAY_KEY);
+        if (displayKey == null) return;
+        displayKey.remove(HOTBAR_KEY);
     }
 
     public static class NbtInventory {
@@ -145,7 +230,7 @@ public class GoodItemHelper {
          * @return Is Inventory
          */
         public static boolean isInventory(final ItemStack stack) {
-            return GoodNbtHelper.containsDeep(stack.getNbt(), BLOCK_ENTITY_KEY, ITEMS_KEY);
+            return GoodNbtHelper.containsDeep(stack.getNbt(), NbtElement.LIST_TYPE, BLOCK_ENTITY_KEY, ITEMS_KEY);
         }
 
         public static @Nullable NbtList getNbtInventory(@NotNull final ItemStack stack) {
@@ -157,6 +242,4 @@ public class GoodItemHelper {
         }
 
     }
-
-
 }

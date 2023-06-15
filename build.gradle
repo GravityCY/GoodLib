@@ -8,6 +8,7 @@ group = project.maven_group
 
 loom {
     accessWidenerPath = file("src/main/resources/goodlib.accesswidener")
+    log4jConfigs.from(file("log4j.xml"))
 }
 
 repositories {

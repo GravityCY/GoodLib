@@ -6,7 +6,6 @@ import net.minecraft.nbt.NbtList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,22 +34,72 @@ public class GoodNbtHelper {
     }
 
     /**
-     * Experimental method haven't tried it yet. <br>
-     * Essentially the same as {@link GoodNbtHelper#getDeep NbtUtils#getDeep} but it tries to create the NbtCompounds along the way.
-     *
-     * @param comp {@link NbtCompound}.
-     * @param typeSupplier A {@link Supplier} to supply a .
-     * @param clazz A {@link Class} to cast the resulting {@link NbtElement} to.
-     * @param orderedPaths VarArgs of Strings
-     * @return The cast element of the class variable
+     * Gets or creates any {@link NbtElement}
+     * @param nbt The root NBT Compound to use to check if a sub element exists, etc.
+     * @param key The element key to get or create.
+     * @param typeSupplier A {@link Supplier} to provide the element you want to be created if it doesn't exist.
+     * @return The element that has been either gotten or created.
      */
-    public static <T extends NbtElement> @Nullable T getOrCreateDeep(@Nullable NbtCompound comp, @NotNull Supplier<T> typeSupplier,
-                                                                     @NotNull Class<T> clazz, @NotNull String... orderedPaths) {
-        if (comp == null) return null;
+    public static <T extends NbtElement> @Nullable T getOrCreate(@Nullable NbtCompound nbt, @NotNull String key,
+                                                                 @NotNull Supplier<T> typeSupplier, @NotNull Class<T> clazz) {
+        if (nbt == null) return null;
+        NbtElement elem = nbt.get(key);
+        if (!clazz.isInstance(elem))
+            nbt.put(key, elem = typeSupplier.get());
 
-        if (orderedPaths.length != 1)
-            return getOrCreateDeep(GoodNbtHelper.getOrCreate(comp, orderedPaths[0]), typeSupplier, clazz, Arrays.stream(orderedPaths).skip(1).toArray(String[]::new));
-        return GoodNbtHelper.getOrCreate(comp, orderedPaths[0], typeSupplier, clazz);
+        return clazz.cast(elem);
+    }
+
+    /**
+     * Gets or creates an {@link NbtCompound}.
+     * @param nbt The root NBT Compound to use to check if a sub element exists, etc.
+     * @param key The key of the element to get or create.
+     * @return The element that has been either gotten or created
+     */
+    public static @Nullable NbtCompound getOrCreate(@Nullable NbtCompound nbt, @NotNull String key) {
+        if (nbt == null) return null;
+        NbtCompound ret = GoodNbtHelper.get(nbt, key);
+        if (ret == null)
+            nbt.put(key, ret = new NbtCompound());
+        return ret;
+    }
+
+    /**
+     * Gets a NULLABLE element from the NBT <br><br>
+     * You could also just do <span style="background-color:#222">NbtList theList = (NbtList) nbt.get("TheList")</span>
+     * @param nbt The NBT to work on
+     * @param key The key of the element to get.
+     * @param clazz A class of what to return
+     * @return Returns the type of the class parameter
+     * @param <T> The class of what to return
+     */
+    public static <T extends NbtElement> @Nullable T get(@Nullable NbtCompound nbt, @NotNull String key,
+                                                         @NotNull Class<T> clazz) {
+        if (nbt == null) return null;
+        NbtElement elem = nbt.get(key);
+        return clazz.isInstance(elem) ? clazz.cast(elem) : null;
+    }
+
+    /**
+     * Gets an NbtCompound from a key.
+     * @param nbt The NBT to work on
+     * @param key The key inside the NBT
+     * @return Returns an
+     */
+    public static @Nullable NbtCompound get(@Nullable NbtCompound nbt, @NotNull String key) {
+        return get(nbt, key, NbtCompound.class);
+    }
+
+    /**
+     * Overload with the path arg in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp
+     * @param clazz
+     * @param path
+     * @return
+     * @param <T>
+     */
+    public static <T extends NbtElement> @Nullable T getDeep(@Nullable NbtCompound comp, @NotNull Class<T> clazz, String path) {
+        return getDeep(comp, clazz, path.split("\\."));
     }
 
     /**
@@ -59,9 +108,12 @@ public class GoodNbtHelper {
      * Here we have an example of an {@link NbtCompound}
      * <pre>
      *  {
-     *     Parent: {
-     *       SubParent: {
-     *         TheoreticalSubSubParent: {
+     *     Parent:
+     *     {
+     *       SubParent:
+     *       {
+     *         TheoreticalSubSubParent:
+     *         {
      *           ThingYouWant: "You want me so bad"
      *         }
      *       }
@@ -83,25 +135,177 @@ public class GoodNbtHelper {
         if (comp == null) return null;
 
         if (orderedKeys.length != 1)
-            return getDeep(GoodNbtHelper.get(comp, orderedKeys[0]), clazz, Arrays.stream(orderedKeys).skip(1).toArray(String[]::new));
-
+            return getDeep(GoodNbtHelper.get(comp, orderedKeys[0]), clazz, Arrays.copyOfRange(orderedKeys, 1, orderedKeys.length));
         NbtElement elem = comp.get(orderedKeys[0]);
         return clazz.isInstance(elem) ? clazz.cast(elem) : null;
     }
 
     /**
+     * Overload with the path argument in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp NbtCompound
+     * @param path Path
+     * @return Whether something exists or not
+     */
+    public static boolean containsDeep(@Nullable NbtCompound comp, @NotNull String path) {
+        return containsDeep(comp, path.split("\\."));
+    }
+
+    /**
      * Experimental Method haven't tried it yet.<br>
-     * Same as getDeep etc. but just does checks whether things exist.
+     * Checks whether something exists at the given path
      * @param comp NbtCompound
      * @param orderedKeys VarArgs of Strings
      * @return Whether something exists or not
      */
-    public static <T extends NbtElement> boolean containsDeep(@Nullable NbtCompound comp, @NotNull String... orderedKeys) {
+    public static boolean containsDeep(@Nullable NbtCompound comp, @NotNull String... orderedKeys) {
         if (comp == null) return false;
 
         if (orderedKeys.length != 1)
-            return containsDeep(GoodNbtHelper.get(comp, orderedKeys[0]), Arrays.stream(orderedKeys).skip(1).toArray(String[]::new));
+            return containsDeep(GoodNbtHelper.get(comp, orderedKeys[0]), Arrays.copyOfRange(orderedKeys, 1, orderedKeys.length));
         return comp.contains(orderedKeys[0]);
+    }
+
+    /**
+     * Overload with the path argument in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp NbtCompound
+     * @param type NbtElement.(Type)
+     * @param path Path
+     * @return Whether something exists or not
+     */
+    public static boolean containsDeep(@Nullable NbtCompound comp, int type, @NotNull String path) {
+        return containsDeep(comp, type, path.split("\\."));
+    }
+
+    /**
+     * Experimental Method haven't tried it yet.<br>
+     * Checks whether something exists at the given path and is of the given type
+     * @param comp NbtCompound
+     * @param type NbtElement.(Type)
+     * @param orderedKeys Ordered Keys
+     * @return Whether something exists or not
+     */
+    public static boolean containsDeep(@Nullable NbtCompound comp, int type, @NotNull String... orderedKeys) {
+        if (comp == null) return false;
+
+        if (orderedKeys.length != 1)
+            return containsDeep(GoodNbtHelper.get(comp, orderedKeys[0]), type, Arrays.copyOfRange(orderedKeys, 1, orderedKeys.length));
+        return comp.contains(orderedKeys[0], type);
+    }
+
+    /**
+     * Overload with the path argument in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp NbtCompound
+     * @param path Path
+     * @return Success
+     */
+    public static boolean removeDeep(@Nullable NbtCompound comp, @NotNull String path) {
+        return removeDeep(comp, path.split("\\."));
+    }
+
+    /**
+     * Experimental Method haven't tried it yet.<br>
+     * @param comp NbtCompound
+     * @param orderedKeys VarArgs of Strings
+     * @return Success
+     */
+    public static boolean removeDeep(@Nullable NbtCompound comp, @NotNull String... orderedKeys) {
+        if (comp == null) return false;
+
+        if (orderedKeys.length != 1)
+            return removeDeep(GoodNbtHelper.get(comp, orderedKeys[0]), Arrays.copyOfRange(orderedKeys, 1, orderedKeys.length));
+        if (!comp.contains(orderedKeys[0])) return false;
+        comp.remove(orderedKeys[0]);
+        return true;
+    }
+
+    /**
+     * Overload with the path argument in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp NbtCompound
+     * @param element NbtElement to put
+     * @param path Path
+     * @return Success
+     */
+    public static boolean putDeep(@Nullable NbtCompound comp, NbtElement element, @NotNull String path) {
+        return putDeep(comp, element, path.split("\\."));
+    }
+
+    /**
+     * Experimental Method haven't tried it yet.<br>
+     * Puts an NbtElement at the last orderedKeys path <br>
+     * Creates NbtCompounds along the way
+     * @param comp NbtCompound
+     * @param element NbtElement to put
+     * @param orderedKeys VarArgs of Strings
+     * @return Success
+     */
+    public static boolean putDeep(@Nullable NbtCompound comp, NbtElement element, @NotNull String... orderedKeys) {
+        if (comp == null) return false;
+
+        if (orderedKeys.length != 1)
+            return putDeep(GoodNbtHelper.getOrCreate(comp, orderedKeys[0]), element, Arrays.copyOfRange(orderedKeys, 1, orderedKeys.length));
+        comp.put(orderedKeys[0], element);
+        return true;
+    }
+
+    /**
+     * Overload with the path arguments in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp NbtCompound
+     * @param fromPath From path
+     * @param toPath To path
+     * @return Success
+     */
+    public static boolean copyDeep(@Nullable NbtCompound comp, @NotNull String fromPath, @NotNull String toPath) {
+        return copyDeep(comp, fromPath.split("\\."), toPath.split("\\."));
+    }
+
+    /**
+     * Experimental Method haven't tried it yet.<br>
+     * Copies an NbtElement at the given 'from' path (if it exists) <br>
+     * Puts it in the given 'to' path <br>
+     * Creates NbtCompounds along the way
+     * @param comp NbtCompound
+     * @param fromKeys From keys
+     * @param toKeys To keys
+     * @return Success
+     */
+    public static boolean copyDeep(@Nullable NbtCompound comp, @NotNull String[] fromKeys, String[] toKeys) {
+        if (comp == null) return false;
+        NbtCompound fromContainer = fromKeys.length == 1 ? comp : getDeep(comp, NbtCompound.class, Arrays.copyOfRange(fromKeys, 0, fromKeys.length - 1));
+        if (fromContainer == null) return false;
+        NbtElement fromElement = fromContainer.get(fromKeys[fromKeys.length - 1]);
+        if (fromElement == null) return false;
+        return putDeep(comp, fromElement.copy(), toKeys);
+    }
+
+    /**
+     * Overload with the path argument in the format of '%s.%s.%s' (parent.subparent.value)
+     * @param comp {@link NbtCompound}.
+     * @param typeSupplier A {@link Supplier} to supply a .
+     * @param clazz A {@link Class} to cast the resulting {@link NbtElement} to.
+     * @param path String in the format of '%s.%s.%s' (parent.subparent.value)
+     * @return The cast element of the class variable
+     */
+    public static <T extends NbtElement> @Nullable T getOrCreateDeep(@Nullable NbtCompound comp, @NotNull Supplier<T> typeSupplier, Class<T> clazz, @NotNull String path) {
+        return getOrCreateDeep(comp, typeSupplier, clazz, path.split("\\."));
+    }
+
+    /**
+     * Experimental method haven't tried it yet. <br>
+     * Essentially the same as {@link GoodNbtHelper#getDeep NbtUtils#getDeep} but it tries to create the NbtCompounds along the way.
+     *
+     * @param comp {@link NbtCompound}.
+     * @param typeSupplier A {@link Supplier} to supply a .
+     * @param clazz A {@link Class} to cast the resulting {@link NbtElement} to.
+     * @param orderedPaths VarArgs of Strings
+     * @return The cast element of the class variable
+     */
+    public static <T extends NbtElement> @Nullable T getOrCreateDeep(@Nullable NbtCompound comp, @NotNull Supplier<T> typeSupplier,
+                                                                     @NotNull Class<T> clazz, @NotNull String... orderedPaths) {
+        if (comp == null) return null;
+
+        if (orderedPaths.length != 1)
+            return getOrCreateDeep(GoodNbtHelper.getOrCreate(comp, orderedPaths[0]), typeSupplier, clazz, Arrays.copyOfRange(orderedPaths, 1, orderedPaths.length));
+        return GoodNbtHelper.getOrCreate(comp, orderedPaths[0], typeSupplier, clazz);
     }
 
     /**
@@ -181,62 +385,5 @@ public class GoodNbtHelper {
                 map.put(convertedKey, convertedValue);
         });
         return map;
-    }
-
-    /**
-     * Gets or creates any {@link NbtElement}
-     * @param nbt The root NBT Compound to use to check if a sub element exists, etc.
-     * @param key The element key to get or create.
-     * @param typeSupplier A {@link Supplier} to provide the element you want to be created if it doesn't exist.
-     * @return The element that has been either gotten or created.
-     */
-    public static <T extends NbtElement> @Nullable T getOrCreate(@Nullable NbtCompound nbt, @NotNull String key,
-                                                                 @NotNull Supplier<T> typeSupplier, @NotNull Class<T> clazz) {
-        if (nbt == null) return null;
-        NbtElement elem = nbt.get(key);
-        if (!clazz.isInstance(elem))
-            nbt.put(key, elem = typeSupplier.get());
-
-        return clazz.cast(elem);
-    }
-
-    /**
-     * Gets or creates an {@link NbtCompound}.
-     * @param nbt The root NBT Compound to use to check if a sub element exists, etc.
-     * @param key The key of the element to get or create.
-     * @return The element that has been either gotten or created
-     */
-    public static @Nullable NbtCompound getOrCreate(@Nullable NbtCompound nbt, @NotNull String key) {
-        if (nbt == null) return null;
-        NbtCompound ret = GoodNbtHelper.get(nbt, key);
-        if (ret == null)
-            nbt.put(key, ret = new NbtCompound());
-        return ret;
-    }
-
-    /**
-     * Gets a NULLABLE element from the NBT <br><br>
-     * You could also just do <span style="background-color:#222">NbtList theList = (NbtList) nbt.get("TheList")</span>
-     * @param nbt The NBT to work on
-     * @param key The key of the element to get.
-     * @param clazz A class of what to return
-     * @return Returns the type of the class parameter
-     * @param <T> The class of what to return
-     */
-    public static <T extends NbtElement> @Nullable T get(@Nullable NbtCompound nbt, @NotNull String key,
-                                                         @NotNull Class<T> clazz) {
-        if (nbt == null) return null;
-        NbtElement elem = nbt.get(key);
-        return clazz.isInstance(elem) ? clazz.cast(elem) : null;
-    }
-
-    /**
-     * Gets an NbtCompound from a key.
-     * @param nbt The NBT to work on
-     * @param key The key inside the NBT
-     * @return Returns an
-     */
-    public static @Nullable NbtCompound get(@Nullable NbtCompound nbt, @NotNull String key) {
-        return get(nbt, key, NbtCompound.class);
     }
 }

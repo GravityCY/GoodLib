@@ -8,12 +8,12 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -33,7 +33,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link Boolean}
      */
-    public static GlobalPos getGlobalPosPoint(ItemStack compass) {
+    public static @Nullable GlobalPos getGlobalPosPoint(@NotNull ItemStack compass) {
         if (!BetterCompass.isPointingAtPosition(compass)) return null;
         NbtCompound pointsToComp = compass.getNbt().getCompound(POINTS_TO);
         BlockPos blockPos = NbtHelper.toBlockPos(pointsToComp.getCompound(BLOCK_POS));
@@ -48,7 +48,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link NbtCompound}
      */
-    public static NbtCompound getOrCreatePointsTo(ItemStack compass) {
+    public static @NotNull NbtCompound getOrCreatePointsTo(@NotNull ItemStack compass) {
         return GoodNbtHelper.getOrCreate(compass.getOrCreateNbt(), POINTS_TO);
     }
 
@@ -58,7 +58,7 @@ public class BetterCompass {
      * @param pos {@link BlockPos}
      * @param dimension {@link Identifier}
      */
-    public static void setPoint(ItemStack compass, BlockPos pos, Identifier dimension) {
+    public static void setPoint(@NotNull ItemStack compass, @NotNull BlockPos pos, @NotNull Identifier dimension) {
         BetterCompass.setPointPosition(compass, pos);
         BetterCompass.setPointDimension(compass, dimension);
     }
@@ -68,7 +68,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link NbtCompound}
      */
-    public static NbtCompound getPointsTo(ItemStack compass) {
+    public static @Nullable NbtCompound getPointsTo(@NotNull ItemStack compass) {
         if (!isPointing(compass)) return null;
         return compass.getNbt().getCompound(POINTS_TO);
     }
@@ -78,9 +78,9 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link Boolean}
      */
-    public static boolean isPointing(ItemStack compass) {
+    public static boolean isPointing(@NotNull ItemStack compass) {
         NbtCompound nbt = compass.getNbt();
-        return nbt != null && nbt.contains(POINTS_TO);
+        return nbt != null && nbt.contains(POINTS_TO, NbtElement.COMPOUND_TYPE);
     }
 
     /**
@@ -88,7 +88,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @param dimension {@link Identifier}
      */
-    public static void setPointDimension(ItemStack compass, Identifier dimension) {
+    public static void setPointDimension(@NotNull ItemStack compass, @NotNull Identifier dimension) {
         GoodLib.LOGGER.debug("[CompassUtils] Setting compass point dimension to: {}", dimension);
         BetterCompass.getOrCreatePointsTo(compass).putString(DIMENSION, dimension.toString());
     }
@@ -98,7 +98,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link Identifier}
      */
-    public static Identifier getPointDimension(ItemStack compass) {
+    public static Identifier getPointDimension(@NotNull ItemStack compass) {
         if (!BetterCompass.isPointing(compass)) return null;
         return new Identifier(BetterCompass.getPointsTo(compass).getString(DIMENSION));
     }
@@ -108,8 +108,8 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link Boolean}
      */
-    public static boolean isPointingAtDimension(ItemStack compass) {
-        return isPointing(compass) && getPointsTo(compass).contains(DIMENSION);
+    public static boolean isPointingAtDimension(@NotNull ItemStack compass) {
+        return isPointing(compass) && getPointsTo(compass).contains(DIMENSION, NbtElement.STRING_TYPE);
     }
 
     /**
@@ -117,7 +117,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @param pos {@link BlockPos}
      */
-    public static void setPointPosition(ItemStack compass, BlockPos pos) {
+    public static void setPointPosition(@NotNull ItemStack compass, @NotNull BlockPos pos) {
         GoodLib.LOGGER.debug("[CompassUtils] Setting compass point position to: {}", pos);
         BetterCompass.getOrCreatePointsTo(compass).put(BLOCK_POS, NbtHelper.fromBlockPos(pos));
     }
@@ -127,7 +127,7 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link BlockPos}
      */
-    public static BlockPos getPointPosition(ItemStack compass) {
+    public static @Nullable BlockPos getPointPosition(@NotNull ItemStack compass) {
         if (!BetterCompass.isPointingAtPosition(compass)) return null;
         return NbtHelper.toBlockPos(getPointsTo(compass).getCompound(BLOCK_POS));
     }
@@ -137,37 +137,37 @@ public class BetterCompass {
      * @param compass {@link ItemStack}
      * @return {@link Boolean}
      */
-    public static boolean isPointingAtPosition(ItemStack compass) {
+    public static boolean isPointingAtPosition(@NotNull ItemStack compass) {
         if (!BetterCompass.isPointing(compass)) return false;
         NbtCompound pointsTo = compass.getSubNbt(POINTS_TO);
-        return pointsTo.contains(BLOCK_POS) && pointsTo.contains(DIMENSION);
+        return pointsTo.contains(BLOCK_POS) && pointsTo.contains(DIMENSION, NbtElement.STRING_TYPE);
     }
 
-    public static void setPointStrength(ItemStack compass, double strength) {
+    public static void setPointStrength(@NotNull ItemStack compass, double strength) {
         GoodLib.LOGGER.debug("[CompassUtils] Setting compass point strength to: {}", strength);
         BetterCompass.getOrCreatePointsTo(compass).putDouble(STRENGTH, strength);
     }
 
-    public static double getPointStrength(ItemStack compass) {
+    public static double getPointStrength(@NotNull ItemStack compass) {
         if (!BetterCompass.isPointing(compass)) return -1;
         return BetterCompass.getPointsTo(compass).getDouble(STRENGTH);
     }
 
-    public static boolean hasPointStrength(ItemStack compass) {
-        return BetterCompass.isPointing(compass) && BetterCompass.getPointsTo(compass).contains(STRENGTH);
+    public static boolean hasPointStrength(@NotNull ItemStack compass) {
+        return BetterCompass.isPointing(compass) && BetterCompass.getPointsTo(compass).contains(STRENGTH, NbtElement.DOUBLE_TYPE);
     }
 
-    public static void setPointsToRandom(ItemStack compass, boolean random) {
+    public static void setPointsToRandom(@NotNull ItemStack compass, boolean random) {
         GoodLib.LOGGER.debug("[CompassUtils] Setting compass point random: {}", random);
         getOrCreatePointsTo(compass).putBoolean(RANDOM, random);
     }
 
-    public static boolean isPointingRandom(ItemStack compass) {
+    public static boolean isPointingRandom(@NotNull ItemStack compass) {
         if (!isPointing(compass)) return false;
-        return getPointsTo(compass).contains(RANDOM);
+        return getPointsTo(compass).contains(RANDOM, NbtElement.BYTE_TYPE);
     }
 
-    public static Boolean getRandom(@NotNull ItemStack compass) {
+    public static @Nullable Boolean getRandom(@NotNull ItemStack compass) {
         if (!isPointingRandom(compass)) return null;
         return getPointsTo(compass).getBoolean(RANDOM);
     }

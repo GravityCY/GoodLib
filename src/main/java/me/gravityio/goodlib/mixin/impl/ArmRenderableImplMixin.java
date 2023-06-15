@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ArmRenderableImplMixin {
     @Shadow protected abstract void renderArmHoldingItem(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float equipProgress, float swingProgress, Arm arm);
 
-    @Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "net/minecraft/client/network/AbstractClientPlayerEntity.isUsingItem ()Z"))
+    @Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "net/minecraft/client/network/AbstractClientPlayerEntity.isUsingItem ()Z", ordinal = 1))
     private void renderArmRenderable(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)
     {
         ArmRenderable armRenderable = ArmRenderableRegistry.getArmRenderable(item);
