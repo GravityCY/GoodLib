@@ -1,17 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "goodlib",
+  "id": "goodlib-better-compass",
   "version": "${version}",
-  "name": "GoodLib",
-  "description": "A Good Library (trust me)",
+  "name": "GoodLib Better Compass",
+  "description": "GoodLib Better Compass",
   "authors": ["GravityIO"],
   "contact": {
     "sources": "https://github.com/GravityCY/GoodLib",
     "issues": "https://github.com/GravityCY/GoodLib/issues"
   },
   "license": "MIT",
-  "icon": "assets/goodlib/icon.png",
   "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.gravityio.goodlib.bettercompass.BetterCompass"
+    ]
+  },
+  "accessWidener": "glib-better-compass.accesswidener",
+  "mixins": [
+    "glib-better-compass.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",

@@ -5,5 +5,18 @@ pluginManagement {
             url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
+        mavenLocal()
     }
 }
+
+rootProject.name = "glib"
+
+include 'glib-base'
+
+include 'glib-better-compass'
+include 'glib-better-commands'
+include 'glib-better-loot'
+include 'glib-arm-renderables'
+// include 'glib-common'
+include 'glib-yacl-utils'
+

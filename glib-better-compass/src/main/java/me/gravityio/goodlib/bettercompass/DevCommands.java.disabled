@@ -1,0 +1,150 @@
+package me.gravityio.goodlib.bettercompass;
+
+import me.gravityio.goodlib.dev.CommandProcessor;
+import me.gravityio.goodlib.dev.CommandProcessor.Commands;
+import me.gravityio.goodlib.helper.GoodHelper;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.DimensionArgumentType;
+import net.minecraft.command.argument.PosArgument;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+
+import java.util.Map;
+
+@Commands(namespace = "glib-compass")
+public class DevCommands {
+
+    public static Text error(String string, Object... format) {
+        return Text.literal(string.formatted(format)).formatted(Formatting.RED);
+    }
+
+    public static Text neutral(String string, Object... format) {
+        return Text.literal(string.formatted(format));
+    }
+
+    public static Text success(String string, Object... format) {
+        return Text.literal(string.formatted(format)).formatted(Formatting.GREEN);
+    }
+
+    @CommandProcessor.ArgumentHandler
+    public static Map<Class<?>, CommandProcessor.IArgumentHandler<ServerCommandSource>> getArgumentHandlers(String cmdName) {
+        var def = CommandProcessor.IArgumentHandler.getDefaultServerHandlers();
+        def.put(ServerPlayerEntity.class, (name, context) -> context.getSource().getPlayer());
+        def.put(BlockPos.class, (name, context) -> context.getArgument(name, PosArgument.class).toAbsoluteBlockPos(context.getSource()));
+        if (cmdName.equals("setPoint")) {
+            def.put(Identifier.class, (name, context) -> context.getArgument(name, Identifier.class));
+        }
+        return def;
+    }
+
+    @CommandProcessor.TypeProvider
+    public static Map<Class<?>, CommandProcessor.IArgumentTypeProvider> getArgumentTypeProviders(String cmdName) {
+        var def = CommandProcessor.IArgumentTypeProvider.getDefaultTypeProviders();
+        if (cmdName.equals("setPoint")) {
+            def.put(Identifier.class, DimensionArgumentType::dimension);
+        }
+        def.put(BlockPos.class, BlockPosArgumentType::blockPos);
+        return def;
+    }
+
+    private static boolean isCompass(ServerPlayerEntity player, ItemStack stack) {
+        if (!stack.isOf(Items.COMPASS)) {
+            player.sendMessage(error("Item '%s' is not a Compass!", GoodHelper.getIdentifier(stack)));
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isPointing(ServerPlayerEntity player, ItemStack stack) {
+        if (!BetterCompassHelper.isPointing(stack)) {
+            player.sendMessage(error("Compass is not pointing at anything!"));
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isPointingAtDimension(ServerPlayerEntity player, ItemStack stack) {
+        if (!BetterCompassHelper.isPointingAtDimension(stack)) {
+            player.sendMessage(error("Compass is not pointing at a dimension!"));
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isPointingAtPosition(ServerPlayerEntity player, ItemStack stack) {
+        if (!BetterCompassHelper.isPointingAtPosition(stack)) {
+            player.sendMessage(error("Compass is not pointing at any position!"));
+            return false;
+        }
+        return true;
+    }
+
+    @CommandProcessor.Command
+    public static void setPoint(ServerPlayerEntity player, @CommandProcessor.Argument(name = "dimension") Identifier dimension, @CommandProcessor.Argument(name = "position") BlockPos pos) {
+        ItemStack stack = player.getMainHandStack();
+        if (!isCompass(player, stack)) return;
+
+        BetterCompassHelper.setPoint(stack, pos, dimension);
+        player.sendMessage(success("Set Point NBT to; Position: %s, Dimension: %s", pos.toShortString(), dimension.toString()));
+    }
+
+    @CommandProcessor.Command
+    public static void setPointPosition(ServerPlayerEntity player, @CommandProcessor.Argument(name = "position") BlockPos pos) {
+        ItemStack stack = player.getMainHandStack();
+        if (!isCompass(player, stack)) return;
+
+        BetterCompassHelper.setPointPosition(stack, pos);
+        player.sendMessage(success("Set Point NBT to Position: %s", pos.toShortString()));
+    }
+
+    @CommandProcessor.Command
+    public static void getPoint(ServerPlayerEntity player) {
+        ItemStack stack = player.getMainHandStack();
+        if (!isCompass(player, stack)) return;
+        if (!isPointing(player, stack)) return;
+        BlockPos pos = BetterCompassHelper.getPointPosition(stack);
+        Identifier dimension = BetterCompassHelper.getPointDimension(stack);
+        player.sendMessage(success("Compass is pointing at (%s) in dimension '%s'", pos.toShortString(), dimension.toString()));
+    }
+
+    @CommandProcessor.Command
+    public static void getPointPosition(ServerPlayerEntity player) {
+        ItemStack stack = player.getMainHandStack();
+        if (!isCompass(player, stack)) return;
+        if (!isPointingAtPosition(player, stack)) return;
+        BlockPos pos = BetterCompassHelper.getPointPosition(stack);
+        player.sendMessage(success("Compass is pointing at (%s)", pos.toShortString()));
+    }
+
+    @CommandProcessor.Command
+    public static void getPointDimension(ServerPlayerEntity player) {
+        ItemStack stack = player.getMainHandStack();
+        if (!isCompass(player, stack)) return;
+        if (!isPointingAtDimension(player, stack)) return;
+        Identifier dimension = BetterCompassHelper.getPointDimension(stack);
+        player.sendMessage(success("Compass is pointing at dimension '%s'", dimension.toString()));
+    }
+
+    @CommandProcessor.Command
+    public static void getGlobalPosPoint(ServerPlayerEntity player) {
+            ItemStack stack = player.getMainHandStack();
+            if (!stack.isOf(Items.COMPASS)) {
+                player.sendMessage(error("'%s' is not a Compass", GoodHelper.getIdentifier(stack).toString()));
+                return;
+            }
+
+            GlobalPos pos = BetterCompassHelper.getGlobalPosPoint(stack);
+            if (pos != null) {
+                player.sendMessage(success("Compass is pointing to dimension '%s' at position (%s)", pos.getDimension().getValue().toString(), pos.getPos().toString()));
+            } else {
+                player.sendMessage(error("Compass is not pointing to any global position."));
+            }
+        }
+}

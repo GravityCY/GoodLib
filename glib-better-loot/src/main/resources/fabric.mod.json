@@ -1,17 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "goodlib",
+  "id": "goodlib-better-loot",
   "version": "${version}",
-  "name": "GoodLib",
-  "description": "A Good Library (trust me)",
+  "name": "GoodLib Better Loot",
+  "description": "GoodLib Better Loot",
   "authors": ["GravityIO"],
   "contact": {
     "sources": "https://github.com/GravityCY/GoodLib",
     "issues": "https://github.com/GravityCY/GoodLib/issues"
   },
   "license": "MIT",
-  "icon": "assets/goodlib/icon.png",
   "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.gravityio.goodlib.betterloot.BetterLootMod"
+    ]
+  },
+  "mixins": [
+    "glib-better-loot.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",

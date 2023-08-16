@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.gravityio.goodlib.bettercompass.mixin.impl",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "client.CustomCompassAngleMixin",
+    "client.CustomCompassDirectionMixin",
+    "client.ItemStackAngleInterpolatorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

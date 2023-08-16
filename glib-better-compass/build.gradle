@@ -1,0 +1,10 @@
+archivesBaseName = "glib-better-compass"
+version = "1.0"
+
+pdepend(project, [
+        "glib-base"
+])
+
+loom {
+    accessWidenerPath = file("src/main/resources/glib-better-compass.accesswidener")
+}

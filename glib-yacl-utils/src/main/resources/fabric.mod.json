@@ -1,21 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "goodlib",
+  "id": "goodlib-yacl-utils",
   "version": "${version}",
-  "name": "GoodLib",
-  "description": "A Good Library (trust me)",
+  "name": "GoodLib YACL Utils",
+  "description": "GoodLib YACL Utils",
   "authors": ["GravityIO"],
   "contact": {
     "sources": "https://github.com/GravityCY/GoodLib",
     "issues": "https://github.com/GravityCY/GoodLib/issues"
   },
   "license": "MIT",
-  "icon": "assets/goodlib/icon.png",
+  "icon": "assets/goodlib-yacl-utils/icon.png",
   "environment": "*",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "${minecraft_version}"
+  },
+  "entrypoints": {
+    "modmenu": ["me.gravityio.yaclutils.compat.ModMenuApiImpl"]
   },
   "custom": {
     "modmenu": {

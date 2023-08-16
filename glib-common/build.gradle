@@ -1,0 +1,7 @@
+archivesBaseName = "glib-common"
+version = "1.0"
+
+pdepend(project, [
+        "glib-base",
+        "glib-better-commands"
+])

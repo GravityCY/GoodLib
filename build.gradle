@@ -1,84 +1,147 @@
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
+    id 'fabric-loom' version '1.2-SNAPSHOT' apply false
     id 'maven-publish'
+    id "java-library"
 }
 
 version = project.mod_version
-group = project.maven_group
+group = "me.gravityio.goodlib"
 
-loom {
-    accessWidenerPath = file("src/main/resources/goodlib.accesswidener")
-    log4jConfigs.from(file("log4j.xml"))
+def pdepend(project, List<String> depNames) {
+    def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: "namedElements") }
+    project.dependencies {
+        deps.each {
+            api it
+        }
+    }
+
+    project.publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom.withXml {
+                    def depsNode = asNode().appendNode("dependencies")
+                    deps.each {
+                        def depNode = depsNode.appendNode("dependency")
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
 }
 
-repositories {
-    mavenLocal()
-    maven { url = "https://jitpack.io"	}
+allprojects {
+    group = "me.gravityio.goodlib"
+
+    apply plugin: "maven-publish"
+    apply plugin: "fabric-loom"
+    apply plugin: "java-library"
+
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = 17
+    }
+
+    processResources {
+        inputs.property "version", project.version
+        inputs.property "minecraft_version", project.minecraft_version
+        inputs.property "loader_version", project.loader_version
+        filteringCharset "UTF-8"
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version,
+                    "minecraft_version": project.minecraft_version,
+                    "loader_version": project.loader_version
+        }
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url = "https://jitpack.io"	}
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+        modApi "net.fabricmc:fabric-loader:${project.loader_version}"
+        modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+        // Mixin Extras
+        implementation("com.github.LlamaLad7:MixinExtras:0.1.1")
+        annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
+    }
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-
-    // Fabric Stuff
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    // Mixin Extras
-    implementation("com.github.LlamaLad7:MixinExtras:0.1.1")
     include("com.github.LlamaLad7:MixinExtras:0.1.1")
-    annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
-}
-
-processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
-    filteringCharset "UTF-8"
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+    subprojects.each {
+        api project(path: "${it.path}", configuration: "namedElements")
     }
 }
 
-def targetJavaVersion = 17
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release = targetJavaVersion
+subprojects {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact(remapJar) {
+                    builtBy(remapJar)
+                }
+
+                artifact(remapSourcesJar) {
+                    builtBy remapSourcesJar
+                }
+            }
+        }
+    }
+    loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+}
+
+remapJar {
+    afterEvaluate {
+        subprojects.each {
+            // Include the signed or none signed jar from the sub project.
+            nestedJars.from project("${it.path}").tasks.getByName("remapJar")
+        }
     }
 }
 
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-    archivesBaseName = project.archives_base_name
-    withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
+subprojects.each {
+    remapJar.dependsOn("${it.path}:remapJar")
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
-            artifactId project.archives_base_name
+            artifact(remapJar) {
+                builtBy(remapJar)
+            }
+
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            pom.withXml {
+                def depsNode = asNode().appendNode("dependencies")
+                subprojects.each {
+                    def depNode = depsNode.appendNode("dependency")
+                    depNode.appendNode("groupId", it.group)
+                    depNode.appendNode("artifactId", it.name)
+                    depNode.appendNode("version", it.version)
+                    depNode.appendNode("scope", "compile")
+                }
+            }
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
-    }
 }
+
+

@@ -1,28 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "goodlib",
+  "id": "glib-common",
   "version": "${version}",
-  "name": "GoodLib",
-  "description": "A Good Library (trust me)",
+  "name": "GoodLib Common",
+  "description": "GoodLib Common",
   "authors": ["GravityIO"],
   "contact": {
     "sources": "https://github.com/GravityCY/GoodLib",
     "issues": "https://github.com/GravityCY/GoodLib/issues"
   },
   "license": "MIT",
-  "icon": "assets/goodlib/icon.png",
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
+  },
   "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.gravityio.goodlib.common.CommonMod"
+    ]
+  },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "${minecraft_version}"
-  },
-  "custom": {
-    "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "goodlib"
-      }
-    }
   }
 }

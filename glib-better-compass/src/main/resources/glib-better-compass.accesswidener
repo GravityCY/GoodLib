@@ -1,0 +1,8 @@
+accessWidener v1 named
+
+# Compass Angle Predicate Provider
+accessible class net/minecraft/client/item/CompassAnglePredicateProvider$AngleInterpolator
+accessible method net/minecraft/client/item/CompassAnglePredicateProvider$AngleInterpolator <init> ()V
+accessible method net/minecraft/client/item/CompassAnglePredicateProvider$AngleInterpolator update (JD)V
+accessible method net/minecraft/client/item/CompassAnglePredicateProvider$AngleInterpolator shouldUpdate (J)Z
+accessible field net/minecraft/client/item/CompassAnglePredicateProvider$AngleInterpolator value D
