@@ -19,10 +19,7 @@
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ],
-      "parent": {
-        "id": "goodlib"
-      }
+      "badges": [ "library" ]
     }
   }
 }

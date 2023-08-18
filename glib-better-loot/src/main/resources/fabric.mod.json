@@ -28,7 +28,10 @@
     "modmenu": {
       "badges": [ "library" ],
       "parent": {
-        "id": "goodlib"
+        "id": "goodlib",
+        "name": "GoodLib",
+        "description": "A Good Library (trust me)",
+        "badges": [ "library" ]
       }
     }
   }

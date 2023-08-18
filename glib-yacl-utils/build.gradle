@@ -12,5 +12,5 @@ repositories {
 }
 
 dependencies {
-    modApi 'dev.isxander.yacl:yet-another-config-lib-fabric:3.0.4+1.19.4'
+    modImplementation 'dev.isxander.yacl:yet-another-config-lib-fabric:3.0.4+1.19.4'
 }

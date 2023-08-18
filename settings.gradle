@@ -19,4 +19,5 @@ include 'glib-better-loot'
 include 'glib-arm-renderables'
 // include 'glib-common'
 include 'glib-yacl-utils'
+include 'glib-keybind-manager'
 

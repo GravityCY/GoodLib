@@ -90,27 +90,27 @@ public class GoodEvents {
         listener.pressed(window, button, action, mods);
   });
 
-  /**
-   * Whenever a player crafts currently only works for the smithing table
-   */
-  public static Event<OnCraft> ON_CRAFT = EventFactory.createArrayBacked(OnCraft.class,
-    listeners -> (recipe, stack, player) -> {
-      for (OnCraft listener : listeners)
-        listener.craft(recipe, stack, player);
-  });
+//  /**
+//   * Whenever a player crafts currently only works for the smithing table
+//   */
+//  public static Event<OnCraft> ON_CRAFT = EventFactory.createArrayBacked(OnCraft.class,
+//    listeners -> (recipe, stack, player) -> {
+//      for (OnCraft listener : listeners)
+//        listener.craft(recipe, stack, player);
+//  });
 
-  /**
-   * Whenever a player uses an item
-   */
-  public static Event<OnItemUse> ON_ITEM_USE = EventFactory.createArrayBacked(OnItemUse.class,
-    listeners -> (world, player, hand) -> {
-      for (OnItemUse listener : listeners) {
-        TypedActionResult<ItemStack> result = listener.onUse(world, player, hand);
-        if (result != null && result.getResult() != ActionResult.PASS)
-          return result;
-      }
-      return null;
-  });
+//  /**
+//   * Whenever a player uses an item
+//   */
+//  public static Event<OnItemUse> ON_ITEM_USE = EventFactory.createArrayBacked(OnItemUse.class,
+//    listeners -> (world, player, hand) -> {
+//      for (OnItemUse listener : listeners) {
+//        TypedActionResult<ItemStack> result = listener.onUse(world, player, hand);
+//        if (result != null && result.getResult() != ActionResult.PASS)
+//          return result;
+//      }
+//      return null;
+//  });
 
 
   public interface MissingTranslation {

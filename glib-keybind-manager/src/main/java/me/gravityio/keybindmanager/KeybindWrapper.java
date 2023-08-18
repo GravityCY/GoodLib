@@ -1,4 +1,4 @@
-package me.gravityio.goodlib.lib.keybinds;
+package me.gravityio.keybindmanager;
 
 import net.minecraft.client.option.KeyBinding;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +12,6 @@ public class KeybindWrapper {
     private Runnable whileRunnable;
     private Runnable pressedRunnable;
     private Runnable releasedRunnable;
-
     protected boolean down;
 
     public KeybindWrapper(KeyBinding bind) {

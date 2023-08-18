@@ -6,6 +6,7 @@ import net.minecraft.nbt.NbtList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.AbstractCollection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -314,7 +315,7 @@ public class GoodNbtHelper {
      * @param elementConverter a Function that receives your list elements and should return something that extends or is an NbtElement
      * @return {@link NbtList} from the {@link List}
      */
-    public static <T> @Nullable NbtList fromList(@Nullable List<T> list, @NotNull Function<T, NbtElement> elementConverter) {
+    public static <T> @Nullable NbtList fromList(@Nullable AbstractCollection<T> list, @NotNull Function<T, NbtElement> elementConverter) {
         if (list == null) return null;
 
         NbtList nbtList = new NbtList();
@@ -333,7 +334,7 @@ public class GoodNbtHelper {
      * @param elementConverter a Function that receives the NbtLists' NbtElements and converts them to your List Type
      * @return Converted {@link List}
      */
-    public static <T> @Nullable List<T> toList(@Nullable NbtList nbtList, @NotNull List<T> list,
+    public static <T> @Nullable AbstractCollection<T> toList(@Nullable NbtList nbtList, @NotNull AbstractCollection<T> list,
                                                @NotNull Function<NbtElement, T> elementConverter) {
         if (nbtList == null) return null;
 

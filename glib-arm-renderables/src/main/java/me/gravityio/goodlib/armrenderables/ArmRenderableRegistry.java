@@ -1,7 +1,6 @@
-package me.gravityio.goodlib.lib.arm_renderable;
+package me.gravityio.goodlib.armrenderables;
 
-import me.gravityio.goodlib.GoodLib;
-import me.gravityio.goodlib.mixin.impl.ArmRenderableImplMixin;
+import me.gravityio.goodlib.armrenderables.mixin.impl.ArmRenderableImplMixin;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -18,7 +17,7 @@ import java.util.List;
 public class ArmRenderableRegistry {
     private static final List<ArmRenderable> armRenderableList = new ArrayList<>();
     public static <T extends ArmRenderable> T register(T armRenderable) {
-        GoodLib.LOGGER.debug("[ArmRenderableRegistry] Registering Arm Renderable");
+        ArmRenderablesMod.LOGGER.debug("[ArmRenderableRegistry] Registering Arm Renderable");
         armRenderableList.add(armRenderable);
         return armRenderable;
     }

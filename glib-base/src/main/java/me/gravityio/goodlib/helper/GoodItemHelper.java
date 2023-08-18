@@ -146,8 +146,6 @@ public class GoodItemHelper {
 
     /**
      *
-     * @param stack
-     * @param text
      */
 //    @Command
     public static void setHotbarTooltip(@NotNull final ItemStack stack, @NotNull final Text text) {

@@ -1,4 +1,4 @@
-package me.gravityio.goodlib.lib.arm_renderable;
+package me.gravityio.goodlib.armrenderables;
 
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;

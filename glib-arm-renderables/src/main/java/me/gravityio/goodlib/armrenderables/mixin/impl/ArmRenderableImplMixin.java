@@ -1,7 +1,7 @@
-package me.gravityio.goodlib.mixin.impl;
+package me.gravityio.goodlib.armrenderables.mixin.impl;
 
-import me.gravityio.goodlib.lib.arm_renderable.ArmRenderable;
-import me.gravityio.goodlib.lib.arm_renderable.ArmRenderableRegistry;
+import me.gravityio.goodlib.armrenderables.ArmRenderable;
+import me.gravityio.goodlib.armrenderables.ArmRenderableRegistry;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;

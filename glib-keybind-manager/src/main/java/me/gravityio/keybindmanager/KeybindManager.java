@@ -1,4 +1,4 @@
-package me.gravityio.goodlib.lib.keybinds;
+package me.gravityio.keybindmanager;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import org.jetbrains.annotations.NotNull;
