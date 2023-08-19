@@ -1,5 +1,4 @@
 archivesBaseName = 'glib-yacl-utils'
-version = '1.0'
 
 repositories {
     maven {

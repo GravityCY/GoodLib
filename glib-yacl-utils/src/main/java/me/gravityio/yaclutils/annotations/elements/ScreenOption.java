@@ -1,9 +1,12 @@
 package me.gravityio.yaclutils.annotations.elements;
 
+import dev.isxander.yacl3.api.OptionFlag;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collection;
 
 /**
  * Marks this field as an option to be present in the config screen,
@@ -32,4 +35,23 @@ public @interface ScreenOption {
      * Used to add the fields in this order to the GUI
      */
     int index();
+
+    /**
+     * Whether the game needs
+     */
+    boolean restart() default false;
+    OptionFlag[] flags() default {};
+
+    enum OptionFlag {
+        RESTART(dev.isxander.yacl3.api.OptionFlag.GAME_RESTART),
+        RELOAD_CHUNKS(dev.isxander.yacl3.api.OptionFlag.RELOAD_CHUNKS),
+        WORLD_RENDER_UPDATE(dev.isxander.yacl3.api.OptionFlag.WORLD_RENDER_UPDATE),
+        ASSET_RELOAD(dev.isxander.yacl3.api.OptionFlag.ASSET_RELOAD);
+        public final dev.isxander.yacl3.api.OptionFlag yaclFlag;
+
+        OptionFlag(dev.isxander.yacl3.api.OptionFlag yaclFlag) {
+            this.yaclFlag = yaclFlag;
+        }
+
+    }
 }

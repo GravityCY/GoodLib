@@ -6,7 +6,7 @@ import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import me.gravityio.yaclutils.OptionData;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalField;
 
-public class DecimalFieldBuilder implements AnnotBuilder{
+public class DecimalFieldTransformer implements OptionTransformer {
 
     @Override
     public Option.Builder<?> setup(OptionData data) {
@@ -24,12 +24,12 @@ public class DecimalFieldBuilder implements AnnotBuilder{
         }
 
         if (type == float.class || type == Float.class) {
-            Option.Builder<Float> builder = GenericBuilder.getDefault(data);
+            Option.Builder<Float> builder = GenericTransformer.getDefault(data);
             builder.customController(opt -> new FloatFieldController(opt, (float) min, (float) max))
                     .binding((Float) data.def(), () -> (Float) data.getter().get(), data.setter()::accept);
             return builder;
         } else if(type == double.class || type == Double.class) {
-            Option.Builder<Double> builder = GenericBuilder.getDefault(data);
+            Option.Builder<Double> builder = GenericTransformer.getDefault(data);
             builder.customController(opt -> new DoubleFieldController(opt, min, max))
                     .binding((Double) data.def(), () -> (Double) data.getter().get(), data.setter()::accept);
             return builder;

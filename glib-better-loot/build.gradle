@@ -1,5 +1,4 @@
 archivesBaseName = "glib-better-loot"
-version = "1.0"
 
 pdepend(project, [
         "glib-base"

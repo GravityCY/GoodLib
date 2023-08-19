@@ -1,5 +1,4 @@
 archivesBaseName = "glib-better-compass"
-version = "1.0"
 
 pdepend(project, [
         "glib-base"

@@ -48,9 +48,15 @@ public class ConfigScreenBuilder {
      * Creates the config screen
      */
     public static Screen getScreen(ConfigInstance<?> instance, Screen parent) {
-        var config = (ConfigScreenFrame) instance.getConfig();
+        var config = instance.getConfig();
         Class<?> conclass = config.getClass();
-        if (!conclass.isAnnotationPresent(Config.class)) return null;
+        if (!conclass.isAnnotationPresent(Config.class)) {
+            throw new MissingConfigAnnotationException("The class is missing the @Config annotation!");
+        }
+        if (!(config instanceof ConfigFrame configFrame)) {
+            throw new MissingFrameException("The class is missing the ConfigFrame interface!");
+        }
+
         var configAnnot = conclass.getAnnotation(Config.class);
         var namespace = configAnnot.namespace();
 
@@ -62,19 +68,18 @@ public class ConfigScreenBuilder {
             Map<String, Option<?>> builtOptionsMap = new LinkedHashMap<>();
             var orderedOptionFields = getOrderedOptionFields(conclass);
             for (Field optionField : orderedOptionFields) {
-                var data = OptionData.fromField(d, config, optionField);
+                var data = OptionData.fromField(d, configFrame, optionField);
                 var option = getOption(data);
                 unbuiltOptionsMap.put(data.id(), option);
             }
 
-            config.onBeforeBuildOptions(unbuiltOptionsMap);
+            configFrame.onBeforeBuildOptions(unbuiltOptionsMap);
             for (Map.Entry<String, Option.Builder<?>> entry : unbuiltOptionsMap.entrySet()) {
                 builtOptionsMap.put(entry.getKey(), entry.getValue().build());
             }
-            config.onAfterBuildOptions(builtOptionsMap);
+            configFrame.onAfterBuildOptions(builtOptionsMap);
             for (Option<?> value : builtOptionsMap.values())
                 category.option(value);
-
 
             builder.title(Text.translatable("yacl.%s.title".formatted(namespace)));
             builder.category(category.build());
@@ -82,4 +87,40 @@ public class ConfigScreenBuilder {
             return builder;
         }).generateScreen(parent);
     }
+
+    public static class MissingFrameException extends RuntimeException {
+
+        public MissingFrameException(String message) {
+            super(message);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
+
+        @Override
+        public void printStackTrace() {
+            System.out.println("MissingFrameException: " + getMessage());
+            System.out.println("Please implement ConfigFrame to your class.");
+        }
+    }
+
+    public static class MissingConfigAnnotationException extends RuntimeException {
+        public MissingConfigAnnotationException(String message) {
+            super(message);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
+
+        @Override
+        public void printStackTrace() {
+            System.out.println("MissingAnnotationException: " + getMessage());
+            System.out.println("Please add the @Config annotation to your class.");
+        }
+    }
+
 }

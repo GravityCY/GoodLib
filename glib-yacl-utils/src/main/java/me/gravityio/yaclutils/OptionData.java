@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
      * Data Containing everything the option needs to be created
      */
-public record OptionData(String namespace, String id, @Nullable String keyLabel, @Nullable String keyDescription, Object def, Field field, Supplier<Object> getter, Consumer<Object> setter) {
+public record OptionData(ScreenOption option, String namespace, String id,  @Nullable String keyLabel, @Nullable String keyDescription, Object def, Field field, Supplier<Object> getter, Consumer<Object> setter) {
 
     public Text getLabel(String format) {
         return Text.translatable(this.getLabelKey(format));
@@ -61,6 +61,6 @@ public record OptionData(String namespace, String id, @Nullable String keyLabel,
         var setter = Helper.getSetterMethod(methods, id);
         Supplier<Object> supplier = getter == null ? () -> Helper.doGetField(configInstance, field) : Helper.getSupplier(configInstance, getter);
         Consumer<Object> consumer = setter == null ? (v) -> Helper.doSetField(configInstance, field, v) : Helper.getConsumer(configInstance, setter);
-        return new OptionData(namespace, id, keyLabel, keyDescription, def, field, supplier, consumer);
+        return new OptionData(optionAnnot, namespace, id, keyLabel, keyDescription, def, field, supplier, consumer);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Needs to be implemented by a Config
  */
-public interface ConfigScreenFrame {
+public interface ConfigFrame {
     default void onBeforeBuildOptions(Map<String, Option.Builder<?>> options) {};
     default void onAfterBuildOptions(Map<String, Option<?>> options) {}
 

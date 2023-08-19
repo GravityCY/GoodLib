@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import static me.gravityio.yaclutils.Helper.DEFAULT_NAMESPACED_FORMAT;
 
-public class BooleanToggleBuilder extends GenericBuilder<Boolean> {
+public class BooleanToggleBuilder extends GenericTransformer<Boolean> {
     @Override
     public Function<Option<Boolean>, Controller<Boolean>> getController(OptionData data) {
         var booleanAnnot = data.field().getAnnotation(BooleanToggle.class);

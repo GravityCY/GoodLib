@@ -6,7 +6,7 @@ import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
 import me.gravityio.yaclutils.OptionData;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalSlider;
 
-public class DecimalSliderBuilder implements AnnotBuilder {
+public class DecimalSliderTransformer implements OptionTransformer {
     @Override
     public Option.Builder<?> setup(OptionData data) {
         var type = data.field().getType();
@@ -26,13 +26,13 @@ public class DecimalSliderBuilder implements AnnotBuilder {
         }
 
         if (type == float.class || type == Float.class) {
-            Option.Builder<Float> builder = GenericBuilder.getDefault(data);
+            Option.Builder<Float> builder = GenericTransformer.getDefault(data);
             builder.customController(opt -> new FloatSliderController(opt, (float) min, (float) max, (float) interval))
                     .binding((Float) data.def(), () -> (Float) data.getter().get(), data.setter()::accept);
 
             return builder;
         } else if(type == double.class || type == Double.class) {
-            Option.Builder<Double> builder = GenericBuilder.getDefault(data);
+            Option.Builder<Double> builder = GenericTransformer.getDefault(data);
             builder.customController(opt -> new DoubleSliderController(opt, min, max, interval))
                     .binding((Double) data.def(), () -> (Double) data.getter().get(), data.setter()::accept);
             return builder;
