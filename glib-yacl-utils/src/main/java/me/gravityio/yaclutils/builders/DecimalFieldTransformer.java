@@ -19,8 +19,8 @@ public class DecimalFieldTransformer implements OptionTransformer {
             min = field.min();
             max = field.max();
         } else {
-            min = 0;
-            max = 100;
+            min = Float.MIN_VALUE;
+            max = Float.MAX_VALUE;
         }
 
         if (type == float.class || type == Float.class) {

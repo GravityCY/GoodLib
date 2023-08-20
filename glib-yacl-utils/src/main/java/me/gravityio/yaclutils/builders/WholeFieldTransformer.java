@@ -19,8 +19,8 @@ public class WholeFieldTransformer extends GenericTransformer<Integer> {
             min = wholeAnnot.min();
             max = wholeAnnot.max();
         } else {
-            min = 0;
-            max = 100;
+            min = Integer.MIN_VALUE;
+            max = Integer.MAX_VALUE;
         }
 
         return opt -> new IntegerFieldController(opt, min, max);
