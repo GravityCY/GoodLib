@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface WholeField {
-    int min() default 0;
+    int min() default Integer.MIN_VALUE;
 
-    int max() default 100;
+    int max() default Integer.MAX_VALUE;
 }

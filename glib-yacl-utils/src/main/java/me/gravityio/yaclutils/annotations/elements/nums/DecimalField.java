@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface DecimalField {
-    double min() default 0f;
-    double max() default 100f;
+    double min() default Float.MIN_VALUE;
+    double max() default Float.MAX_VALUE;
 }
