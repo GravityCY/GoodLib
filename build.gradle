@@ -66,8 +66,53 @@ allprojects {
         withSourcesJar()
     }
 
+
+    sourceSets {
+        testmod {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+        }
+
+        testmodClient {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+
+            compileClasspath += testmod.compileClasspath
+            runtimeClasspath += testmod.runtimeClasspath
+        }
+
+        test {
+            compileClasspath += testmodClient.compileClasspath
+            runtimeClasspath += testmodClient.runtimeClasspath
+        }
+    }
+
     loom {
-        log4jConfigs.from(file("log4j.xml"))
+        runs {
+            testmodClient {
+                client()
+                ideConfigGenerated project.rootProject == project
+                name = "Testmod Client"
+                source sourceSets.testmodClient
+            }
+            testmodServer {
+                server()
+                ideConfigGenerated project.rootProject == project
+                name = "Testmod Server"
+                source sourceSets.testmod
+            }
+        }
+    }
+
+    allprojects.each { p ->
+        loom.mods.register(p.name) {
+            sourceSet p.sourceSets.main
+        }
+
+        loom.mods.register(p.name + "-testmod") {
+            sourceSet p.sourceSets.testmod
+            sourceSet p.sourceSets.testmodClient
+        }
     }
 
     repositories {
@@ -81,10 +126,22 @@ allprojects {
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+        testmodImplementation sourceSets.main.output
+        testmodClientImplementation sourceSets.main.output
+        testmodClientImplementation sourceSets.testmod.output
+
+        testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+        testImplementation sourceSets.testmodClient.output
+
         // Mixin Extras
         implementation("com.github.LlamaLad7:MixinExtras:0.1.1")
         annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
     }
+
+    test {
+        useJUnitPlatform()
+    }
+
 }
 
 dependencies {

@@ -10,7 +10,6 @@ public class ModMenuApiImpl implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        if (!FabricLoader.getInstance().isDevelopmentEnvironment()) return null;
         return p -> ConfigScreenBuilder.getScreen(ExampleConfig.GSON, p);
     }
 }

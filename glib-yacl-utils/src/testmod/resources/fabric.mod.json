@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "goodlib-yacl-utils-testmod",
+  "version": "1.0.0",
+  "name": "GoodLib YACL Utils",
+  "description": "GoodLib YACL Utils",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.gravityio.yaclutils.Mod"
+    ],
+    "modmenu": [
+      "me.gravityio.yaclutils.compat.ModMenuApiImpl"
+    ]
+  }
+}

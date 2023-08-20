@@ -20,6 +20,7 @@ public class BuilderRegistry {
      * Registers a transformer for an annotation
      */
     public static void registerTransformer(Class<? extends Annotation> annotation, TransformerType<?> builderType) {
+        YaclUtils.LOGGER.debug("Registering transformer {} for annotation {}", builderType, annotation);
         transformers.put(annotation, builderType.builder());
     }
 
@@ -27,6 +28,7 @@ public class BuilderRegistry {
      * Registers a default Option Transformer for 1 field type
      */
     public static void registerDefault(Class<?> fieldType, TransformerType<?> builderType) {
+        YaclUtils.LOGGER.debug("Registering default transformer {} for field {}", builderType, fieldType);
         defaults.put(fieldType, builderType.builder());
     }
 
@@ -43,6 +45,8 @@ public class BuilderRegistry {
      * Gets an Option Transformer from an annotation
      */
     public static OptionTransformer getTransformer(Class<? extends Annotation> annotation) {
+        YaclUtils.LOGGER.debug("Getting Transformer for annotaiton {}", annotation);
+
         return transformers.get(annotation);
     }
 

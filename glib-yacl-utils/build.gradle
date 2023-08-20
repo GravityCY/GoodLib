@@ -13,3 +13,7 @@ repositories {
 dependencies {
     modImplementation 'dev.isxander.yacl:yet-another-config-lib-fabric:3.0.4+1.19.4'
 }
+
+loom {
+    log4jConfigs.from(file("log4j.xml"))
+}
