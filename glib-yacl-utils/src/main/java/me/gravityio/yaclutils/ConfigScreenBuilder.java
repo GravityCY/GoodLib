@@ -41,7 +41,7 @@ public class ConfigScreenBuilder {
     private static Option.Builder<?> getOption(OptionData data) {
         var builder = BuilderRegistry.getFromField(data.field());
         if (builder == null) return null;
-        YaclUtils.LOGGER.debug("Setting up Option for field {}", data.field());
+        YaclUtils.DEBUG("Setting up Option for field {}", data.field());
         return builder.setup(data);
     }
 
@@ -60,9 +60,9 @@ public class ConfigScreenBuilder {
 
         var configAnnot = conclass.getAnnotation(Config.class);
         var namespace = configAnnot.namespace();
-        YaclUtils.LOGGER.debug("[ConfigScreenBuilder] Creating Config Screen for class {}, with namespace {}", conclass, namespace);
-        YaclUtils.LOGGER.debug("[ConfigScreenBuilder] Config Frame {}", configFrame.getClass());
-        YaclUtils.LOGGER.debug("[ConfigScreenBuilder] Config Instance {}", instance.getClass());
+        YaclUtils.DEBUG("[ConfigScreenBuilder] Creating Config Screen for class {}, with namespace {}", conclass, namespace);
+        YaclUtils.DEBUG("[ConfigScreenBuilder] Config Frame {}", configFrame.getClass());
+        YaclUtils.DEBUG("[ConfigScreenBuilder] Config Instance {}", instance.getClass());
 
         return YetAnotherConfigLib.create(instance, (d, c, builder) -> {
             var category = ConfigCategory.createBuilder()
