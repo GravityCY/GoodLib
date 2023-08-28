@@ -67,7 +67,8 @@ public class ConfigScreenBuilder {
         YaclUtils.DEBUG("[ConfigScreenBuilder] Config Frame {}", configFrame.getClass());
         YaclUtils.DEBUG("[ConfigScreenBuilder] Config Instance {}", instance.getClass());
 
-        return YetAnotherConfigLib.create(instance, (d, c, builder) -> {
+        return YetAnotherConfigLib.create(instance, (yaclDefaults, yaclConfig, yaclBuilder) -> {
+            yaclBuilder.title(Text.translatable("yacl.%s.title".formatted(namespace)));
             var category = ConfigCategory.createBuilder()
                     .name(Text.translatable("yacl.%s.title".formatted(namespace)));
 
@@ -75,7 +76,7 @@ public class ConfigScreenBuilder {
             Map<String, Option<?>> builtOptionsMap = new LinkedHashMap<>();
             var orderedOptionFields = getOrderedOptionFields(conclass);
             for (Field optionField : orderedOptionFields) {
-                var data = OptionData.fromField(d, configFrame, optionField);
+                var data = OptionData.fromField(yaclDefaults, configFrame, optionField);
                 var option = getOption(data);
                 unbuiltOptionsMap.put(data.id(), option);
             }
@@ -88,10 +89,11 @@ public class ConfigScreenBuilder {
             for (Option<?> value : builtOptionsMap.values())
                 category.option(value);
 
-            builder.title(Text.translatable("yacl.%s.title".formatted(namespace)));
-            builder.category(category.build());
+            configFrame.onBeforeBuildCategory("main", yaclDefaults, category);
+            yaclBuilder.category(category.build());
 
-            return builder;
+            configFrame.onFinishBuilding(yaclDefaults, yaclBuilder);
+            return yaclBuilder;
         }).generateScreen(parent);
     }
 

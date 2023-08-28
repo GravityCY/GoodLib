@@ -9,10 +9,28 @@ import java.util.Map;
 /**
  * Needs to be implemented by a Config
  */
-public interface ConfigFrame {
+public interface ConfigFrame<T> {
+    /**
+     * Called before all Options are built
+     */
     default void onBeforeBuildOptions(Map<String, Option.Builder<?>> options) {}
+    /**
+     * Called after all Options are built
+     */
     default void onAfterBuildOptions(Map<String, Option<?>> options) {}
-    default void onBeforeBuildCategory(String category, ConfigCategory.Builder builder) {}
-    default void onFinishBuilding(YetAnotherConfigLib.Builder builder) {}
+
+    /**
+     * Called before a category is built <br>
+     * This is literally just the main category right
+     * now, since this doesn't support multiple categories with annotations
+     */
+    default void onBeforeBuildCategory(String category, T yaclDefaults, ConfigCategory.Builder builder) {}
+
+    /**
+     * Before finishing building the screen. <br><br>
+     *
+     * Add some custom stuff that the annotations don't support.
+     */
+    default void onFinishBuilding(T yaclDefaults, YetAnotherConfigLib.Builder builder) {}
 
 }
