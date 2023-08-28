@@ -11,5 +11,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Config {
+    /**
+     * The translation key namespace of the config <br><br>
+     *
+     * Used to generate the translation key of all config options in the form of: <br>
+     * yacl.%namespace%.%some_option_id%
+     */
     String namespace();
 }

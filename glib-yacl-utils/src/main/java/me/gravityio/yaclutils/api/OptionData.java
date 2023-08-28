@@ -1,5 +1,6 @@
-package me.gravityio.yaclutils;
+package me.gravityio.yaclutils.api;
 
+import me.gravityio.yaclutils.Helper;
 import me.gravityio.yaclutils.annotations.Config;
 import me.gravityio.yaclutils.annotations.elements.ScreenOption;
 import net.minecraft.text.Text;
@@ -10,8 +11,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
-     * Data Containing everything the option needs to be created
-     */
+* Data Containing everything the option needs to be created
+*/
 public record OptionData(ScreenOption option, String namespace, String id,  @Nullable String keyLabel, @Nullable String keyDescription, Object def, Field field, Supplier<Object> getter, Consumer<Object> setter) {
 
     public Text getLabel(String format) {

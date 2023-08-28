@@ -1,12 +1,12 @@
 package me.gravityio.yaclutils;
 
 import dev.isxander.yacl3.config.ConfigEntry;
-import dev.isxander.yacl3.config.ConfigInstance;
 import dev.isxander.yacl3.config.GsonConfigInstance;
 import me.gravityio.yaclutils.annotations.Config;
 import me.gravityio.yaclutils.annotations.elements.ScreenOption;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalSlider;
 import me.gravityio.yaclutils.annotations.elements.nums.WholeSlider;
+import me.gravityio.yaclutils.api.ConfigFrame;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Path;
@@ -44,4 +44,5 @@ public class ExampleConfig implements ConfigFrame {
     @DecimalSlider
     @ScreenOption(index = 6, restart = true)
     public double someDecimalValueAsADouble = 69.69d;
+
 }

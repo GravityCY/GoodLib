@@ -6,6 +6,9 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.config.ConfigInstance;
 import me.gravityio.yaclutils.annotations.Config;
 import me.gravityio.yaclutils.annotations.elements.ScreenOption;
+import me.gravityio.yaclutils.api.BuilderRegistry;
+import me.gravityio.yaclutils.api.ConfigFrame;
+import me.gravityio.yaclutils.api.OptionData;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 

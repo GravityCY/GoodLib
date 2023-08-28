@@ -1,7 +1,7 @@
-package me.gravityio.yaclutils.builders;
+package me.gravityio.yaclutils.transformers;
 
 import dev.isxander.yacl3.api.Option;
-import me.gravityio.yaclutils.OptionData;
+import me.gravityio.yaclutils.api.OptionData;
 
 /**
  * An OptionTransformer is responsible for setting up an Option for YACL

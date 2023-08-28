@@ -8,7 +8,7 @@ public class IdentifierBuilder {
   private final String key;
 
   public IdentifierBuilder(String namespace) {
-    this(namespace, null);
+    this(namespace, "");
   }
 
   public IdentifierBuilder(String namespace, String key) {

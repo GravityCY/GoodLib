@@ -1,9 +1,9 @@
-package me.gravityio.yaclutils.builders;
+package me.gravityio.yaclutils.transformers;
 
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.gui.controllers.BooleanController;
-import me.gravityio.yaclutils.OptionData;
+import me.gravityio.yaclutils.api.OptionData;
 import me.gravityio.yaclutils.annotations.elements.BooleanToggle;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import static me.gravityio.yaclutils.Helper.DEFAULT_NAMESPACED_FORMAT;
 
-public class BooleanToggleBuilder extends GenericTransformer<Boolean> {
+public class BooleanToggleTransformer extends GenericTransformer<Boolean> {
     @Override
     public Function<Option<Boolean>, Controller<Boolean>> getController(OptionData data) {
         var booleanAnnot = data.field().getAnnotation(BooleanToggle.class);

@@ -1,10 +1,12 @@
-package me.gravityio.yaclutils.builders;
+package me.gravityio.yaclutils.transformers.nums;
 
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
-import me.gravityio.yaclutils.OptionData;
+import me.gravityio.yaclutils.api.OptionData;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalSlider;
+import me.gravityio.yaclutils.transformers.GenericTransformer;
+import me.gravityio.yaclutils.transformers.OptionTransformer;
 
 public class DecimalSliderTransformer implements OptionTransformer {
     @Override

@@ -1,10 +1,12 @@
-package me.gravityio.yaclutils.builders;
+package me.gravityio.yaclutils.transformers.nums;
 
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
-import me.gravityio.yaclutils.OptionData;
+import me.gravityio.yaclutils.api.OptionData;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalField;
+import me.gravityio.yaclutils.transformers.GenericTransformer;
+import me.gravityio.yaclutils.transformers.OptionTransformer;
 
 public class DecimalFieldTransformer implements OptionTransformer {
 

@@ -1,11 +1,12 @@
-package me.gravityio.yaclutils;
+package me.gravityio.yaclutils.api;
 
+import me.gravityio.yaclutils.YaclUtils;
 import me.gravityio.yaclutils.annotations.elements.BooleanToggle;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalField;
 import me.gravityio.yaclutils.annotations.elements.nums.DecimalSlider;
 import me.gravityio.yaclutils.annotations.elements.nums.WholeField;
 import me.gravityio.yaclutils.annotations.elements.nums.WholeSlider;
-import me.gravityio.yaclutils.builders.*;
+import me.gravityio.yaclutils.transformers.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -82,6 +83,7 @@ public class BuilderRegistry {
         registerDefault(Float.class, float.class, TransformerType.DECIMAL_FIELD);
         registerDefault(Double.class, double.class, TransformerType.DECIMAL_FIELD);
         registerDefault(Boolean.class, boolean.class, TransformerType.BOOLEAN);
+        registerDefault(String.class, TransformerType.STRING);
 
         registerTransformer(WholeSlider.class, TransformerType.WHOLE_SLIDER);
         registerTransformer(DecimalSlider.class, TransformerType.DECIMAL_SLIDER);

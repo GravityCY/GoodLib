@@ -17,29 +17,44 @@ import java.util.Collection;
 @Target(ElementType.FIELD)
 public @interface ScreenOption {
     /**
-     * This is used for connecting getters and setters with this
-     * field, and is also used for the automatically generated Translatable Text.
+     * Used For:
+     * <ul>
+     *     <li>Connecting getters and setters with this field</li>
+     *     <li>
+     *         Automatically generating translatable keys in the form of:
+     *         <ul>
+     *         <li>Label: yacl.$namespace.$id.label</li>
+     *         <li>Description: yacl.$namespace.$id.description</li>
+     *         </ul>
+     *     </li>
+     * </ul>
      */
     String id() default "";
 
     /**
-     * Overrides the automatically generated Translatable Text Label to use this explicit key
+     * Overrides the automatically generated Translatable Label Key to use this explicit key
      */
     String labelKey() default "";
     /**
-     * Overrides the automatically generated Translatable Text Description to use this explicit key
+     * Overrides the automatically generated Translatable Description Key to use this explicit key
      */
     String descriptionKey() default "";
 
     /**
-     * Used to add the fields in this order to the GUI
+     * Used to add the fields a specific order to the GUI<br><br>
+     *
+     * Lowest index gets displayed first.
      */
     int index();
 
     /**
-     * Whether the game needs
+     * Whether the game needs to restart for this option
      */
     boolean restart() default false;
+
+    /**
+     * Some extra optional YACl flags for this option
+     */
     OptionFlag[] flags() default {};
 
     enum OptionFlag {
