@@ -51,15 +51,14 @@ public class ConfigScreenBuilder {
     /**
      * Creates the config screen
      */
-    public static Screen getScreen(ConfigInstance<?> instance, Screen parent) {
+    public static <T extends ConfigFrame<T>> Screen getScreen(ConfigInstance<T> instance, Screen parent) {
         var config = instance.getConfig();
         Class<?> conclass = config.getClass();
         if (!conclass.isAnnotationPresent(Config.class)) {
             throw new MissingConfigAnnotationException("The class is missing the @Config annotation!");
         }
-        if (!(config instanceof ConfigFrame configFrame)) {
-            throw new MissingFrameException("The class is missing the ConfigFrame interface!");
-        }
+
+        ConfigFrame<T> configFrame = config;
 
         var configAnnot = conclass.getAnnotation(Config.class);
         var namespace = configAnnot.namespace();
@@ -95,24 +94,6 @@ public class ConfigScreenBuilder {
             configFrame.onFinishBuilding(yaclDefaults, yaclBuilder);
             return yaclBuilder;
         }).generateScreen(parent);
-    }
-
-    public static class MissingFrameException extends RuntimeException {
-
-        public MissingFrameException(String message) {
-            super(message);
-        }
-
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            return this;
-        }
-
-        @Override
-        public void printStackTrace() {
-            System.out.println("MissingFrameException: " + getMessage());
-            System.out.println("Please implement ConfigFrame to your class.");
-        }
     }
 
     public static class MissingConfigAnnotationException extends RuntimeException {

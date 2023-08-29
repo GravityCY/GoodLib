@@ -24,13 +24,13 @@ public interface ConfigFrame<T> {
      * This is literally just the main category right
      * now, since this doesn't support multiple categories with annotations
      */
-    default void onBeforeBuildCategory(String category, T yaclDefaults, ConfigCategory.Builder builder) {}
+    default void onBeforeBuildCategory(String category, T defaults, ConfigCategory.Builder builder) {}
 
     /**
      * Before finishing building the screen. <br><br>
      *
      * Add some custom stuff that the annotations don't support.
      */
-    default void onFinishBuilding(T yaclDefaults, YetAnotherConfigLib.Builder builder) {}
+    default void onFinishBuilding(T defaults, YetAnotherConfigLib.Builder builder) {}
 
 }

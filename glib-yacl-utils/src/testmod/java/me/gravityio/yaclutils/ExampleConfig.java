@@ -1,5 +1,6 @@
 package me.gravityio.yaclutils;
 
+import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
 import me.gravityio.yaclutils.annotations.Config;
@@ -12,11 +13,16 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.nio.file.Path;
 
 @Config(namespace = "example")
-public class ExampleConfig implements ConfigFrame {
+public class ExampleConfig implements ConfigFrame<ExampleConfig> {
     public static final Path path = FabricLoader.getInstance().getConfigDir().resolve("example.json");
     public static GsonConfigInstance<ExampleConfig> GSON = GsonConfigInstance.createBuilder(ExampleConfig.class)
             .setPath(path)
             .build();
+
+    @Override
+    public void onBeforeBuildCategory(String category, ExampleConfig defaults, ConfigCategory.Builder builder) {
+        System.out.println(defaults.toString());
+    }
 
     // USING DEFAULTS
     @ConfigEntry
